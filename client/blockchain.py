@@ -65,6 +65,7 @@ class Blockchain:
         # verify membership
         membership_proof_verification = self.verify_membership_proof('')
         if membership_proof_verification:
+
             self.transactions.append(transaction)
             # add to transaction pool
             # todo
