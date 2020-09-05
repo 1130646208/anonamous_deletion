@@ -2,7 +2,7 @@ import hashlib
 import json
 
 
-def get_hash(block: dict):
+def get_block_hash(block: dict):
     """
     Create a SHA-256 hash of a block
     """

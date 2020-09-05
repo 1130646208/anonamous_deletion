@@ -1,18 +1,6 @@
 from collections import OrderedDict
-
-import binascii
-
-import Crypto
-import Crypto.Random
-from Crypto.Hash import SHA
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
-
-from helpers import get_hash
-
 import hashlib
-import json
-from time import time
+import time
 from urllib.parse import urlparse
 from uuid import uuid4
 
@@ -20,11 +8,14 @@ import requests
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 
+from helpers import get_block_hash
+from pools import public_ip_pool, public_tx_pool
+
 
 MINING_DIFFICULTY = 2
 
 
-class Blockchain:
+class BlockChain:
 
     def __init__(self):
 
@@ -54,24 +45,22 @@ class Blockchain:
     def verify_membership_proof(self, proof):
         return True
 
-    def submit_transaction(self, membership_proof, transaction_type, content, signature):
+    def submit_transaction(self, membership_proof, transaction_type, content):
         """
-        Add a transaction to transactions array if the signature verified
+        Add a transaction to public transaction pool
         """
-        transaction = OrderedDict({'membership_proof': membership_proof,
+        current_time = str(time.time_ns())
+        transaction = OrderedDict({'transaction_id': hashlib.md5(current_time.encode()).hexdigest(),
                                    'transaction_type': transaction_type,
-                                   'content': content})
+                                   'content': content,
+                                   'timestamp': str(current_time)},
+                                  )
 
-        # verify membership
-        membership_proof_verification = self.verify_membership_proof('')
-        if membership_proof_verification:
+        if public_tx_pool.txs_num < public_tx_pool.max_transactions_limit:
+            public_tx_pool.add_tx(transaction)
+            return True
 
-            self.transactions.append(transaction)
-            # add to transaction pool
-            # todo
-            return len(self.chain) + 1
-        else:
-            return False
+        return False
 
     def create_block(self, nonce, previous_hash):
         """
@@ -79,7 +68,7 @@ class Blockchain:
         """
         block = {
             'block_number': len(self.chain) + 1,
-            'timestamp': time(),
+            'timestamp': time.time_ns(),
             'transactions': self.transactions,
             'nonce': nonce,
             'previous_hash': previous_hash
@@ -95,7 +84,7 @@ class Blockchain:
         Proof of work algorithm
         """
         last_block = self.chain[-1]
-        last_hash = get_hash(last_block)
+        last_hash = get_block_hash(last_block)
         nonce = 0
         while self.valid_proof(self.transactions, last_hash, nonce) is False:
             nonce += 1
@@ -122,7 +111,7 @@ class Blockchain:
             block = chain[current_index]
 
             # Check that the hash of the block is correct
-            if block['previous_hash'] != get_hash(last_block):
+            if block['previous_hash'] != get_block_hash(last_block):
                 return False
             transactions = block['transactions']
             if not self.valid_proof(transactions, block['previous_hash'], block['nonce'], MINING_DIFFICULTY):
@@ -170,7 +159,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Instantiate the Blockchain
-blockchain = Blockchain()
+blockchain = BlockChain()
 
 
 @app.route('/nodes/register', methods=['POST'])
