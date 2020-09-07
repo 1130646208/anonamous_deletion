@@ -13,13 +13,13 @@ def register_nodes():
     nodes = values.get('ip').replace(" ", "").split(',')
 
     if nodes is None:
-        return "Error: Please supply a valid list of nodes", 400
+        return "Error: Please supply a valid ip.", 400
 
     for node in nodes:
         public_ip_pool.add_ip(node)
 
     response = {
-        'message': 'New nodes have been added',
+        'message': 'New nodes have been added.',
         'total_nodes': [node for node in public_ip_pool.ips],
     }
     return jsonify(response), 201
