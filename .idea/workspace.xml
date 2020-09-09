@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b2173881-96d4-4d0e-ae38-76fc9dbb779d" name="Default Changelist" comment="client can register with its ip AND ring signature public key">
-      <change afterPath="$PROJECT_DIR$/tests/test_bn128_FQ.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_reconstruct_ring_sig.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/helpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public_pool.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_pool.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ring_signature/ring_signature_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/ring_signature/ring_signature_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_ring_signature.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_ring_signature.py" afterDir="false" />
-    </list>
+    <list default="true" id="b2173881-96d4-4d0e-ae38-76fc9dbb779d" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,7 +192,7 @@
       <workItem from="1599441801053" duration="30000" />
       <workItem from="1599447295600" duration="25280000" />
       <workItem from="1599528308416" duration="27289000" />
-      <workItem from="1599614039227" duration="17492000" />
+      <workItem from="1599614039227" duration="17740000" />
     </task>
     <task id="LOCAL-00001" summary="add ip pool &amp; tx_pool">
       <created>1599290624622</created>
@@ -246,7 +236,21 @@
       <option name="project" value="LOCAL" />
       <updated>1599614058151</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="add membership verification if a client submit a transaction to pool">
+      <created>1599642043507</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1599642043507</updated>
+    </task>
+    <task id="LOCAL-00008" summary="add omitted files">
+      <created>1599642146926</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1599642146926</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -271,7 +275,9 @@
     <MESSAGE value="client can register in pool&#10;client can submit transactions to pool" />
     <MESSAGE value="add ring signature" />
     <MESSAGE value="client can register with its ip AND ring signature public key" />
-    <option name="LAST_COMMIT_MESSAGE" value="client can register with its ip AND ring signature public key" />
+    <MESSAGE value="add membership verification if a client submit a transaction to pool" />
+    <MESSAGE value="add omitted files" />
+    <option name="LAST_COMMIT_MESSAGE" value="add omitted files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
