@@ -2,11 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b2173881-96d4-4d0e-ae38-76fc9dbb779d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/crypto_rsa/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crypto_rsa/crypto_rsa.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_get_all_pks.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_requests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_rsa_enc_dec.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_str_to_hex.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/helpers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pools/ring_sig_pk_pool.py" beforeDir="false" afterPath="$PROJECT_DIR$/pools/ring_sig_pk_pool.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public_pool.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_pool.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ring_signature/ring_signature_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/ring_signature/ring_signature_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_ring_signature.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_ring_signature.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -82,7 +90,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="my_ring_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="helpers" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="anonamous_deletion" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -90,12 +98,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ring_signature" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ring_signature/my_ring_test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/helpers.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -126,7 +134,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="ring_sig_pk_pool" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="test_requests" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="anonamous_deletion" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -134,12 +142,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/pools" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pools/ring_sig_pk_pool.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/test_requests.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -174,9 +182,9 @@
       <list>
         <item itemvalue="Python.client_main" />
         <item itemvalue="Python.public_pool" />
-        <item itemvalue="Python.ring_sig_pk_pool" />
         <item itemvalue="Python.test_ring_signature" />
-        <item itemvalue="Python.my_ring_test" />
+        <item itemvalue="Python.helpers" />
+        <item itemvalue="Python.test_requests" />
       </list>
     </recent_temporary>
   </component>
@@ -197,7 +205,8 @@
       <workItem from="1599361242147" duration="11000" />
       <workItem from="1599361889478" duration="9860000" />
       <workItem from="1599441801053" duration="30000" />
-      <workItem from="1599447295600" duration="16023000" />
+      <workItem from="1599447295600" duration="25280000" />
+      <workItem from="1599528308416" duration="27289000" />
     </task>
     <task id="LOCAL-00001" summary="add ip pool &amp; tx_pool">
       <created>1599290624622</created>
@@ -227,7 +236,14 @@
       <option name="project" value="LOCAL" />
       <updated>1599464418581</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="client can register with its ip AND ring signature public key">
+      <created>1599477632220</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1599477632220</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -251,28 +267,39 @@
     <MESSAGE value="add transaction id" />
     <MESSAGE value="client can register in pool&#10;client can submit transactions to pool" />
     <MESSAGE value="add ring signature" />
-    <option name="LAST_COMMIT_MESSAGE" value="add ring signature" />
+    <MESSAGE value="client can register with its ip AND ring signature public key" />
+    <option name="LAST_COMMIT_MESSAGE" value="client can register with its ip AND ring signature public key" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/client/client.py</url>
-          <line>29</line>
-          <option name="timeStamp" value="3" />
+          <line>57</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/client/client.py</url>
+          <line>40</line>
+          <option name="timeStamp" value="43" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/anonamous_deletion$my_ring_test.coverage" NAME="my_ring_test Coverage Results" MODIFIED="1599448158452" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ring_signature" />
-    <SUITE FILE_PATH="coverage/anonamous_deletion$ring_sig_pk_pool.coverage" NAME="ring_sig_pk_pool Coverage Results" MODIFIED="1599470664337" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pools" />
-    <SUITE FILE_PATH="coverage/anonamous_deletion$test_ring_signature.coverage" NAME="test_ring_signature Coverage Results" MODIFIED="1599470374368" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$test_ring_signature.coverage" NAME="test_ring_signature Coverage Results" MODIFIED="1599571550192" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_tx_pool.coverage" NAME="test_tx_pool Coverage Results" MODIFIED="1599297000278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/anonamous_deletion$client_main.coverage" NAME="client_main Coverage Results" MODIFIED="1599477513128" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$blockchain.coverage" NAME="blockchain Coverage Results" MODIFIED="1599140044024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/client" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$main.coverage" NAME="main Coverage Results" MODIFIED="1599311483716" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$client.coverage" NAME="client Coverage Results" MODIFIED="1599309956994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/client" />
-    <SUITE FILE_PATH="coverage/anonamous_deletion$public_pool.coverage" NAME="public_pool Coverage Results" MODIFIED="1599477221521" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$helpers.coverage" NAME="helpers Coverage Results" MODIFIED="1599567084067" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$test_rsa_enc_dec.coverage" NAME="test_rsa_enc_dec Coverage Results" MODIFIED="1599552422462" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$test_str_to_hex.coverage" NAME="test_str_to_hex Coverage Results" MODIFIED="1599555139087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$public_pool.coverage" NAME="public_pool Coverage Results" MODIFIED="1599572323473" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$ring_sig_pk_pool.coverage" NAME="ring_sig_pk_pool Coverage Results" MODIFIED="1599470664337" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pools" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$test_requests.coverage" NAME="test_requests Coverage Results" MODIFIED="1599565569140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$client_main.coverage" NAME="client_main Coverage Results" MODIFIED="1599573089653" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$test_get_all_pks.coverage" NAME="test_get_all_pks Coverage Results" MODIFIED="1599481893946" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
   </component>
 </project>
