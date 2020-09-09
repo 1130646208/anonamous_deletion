@@ -1,6 +1,9 @@
 import hashlib
 import json
 
+from py_ecc.fields import bn128_FQ
+from py_ecc.fields.field_properties import field_properties
+
 
 def get_block_hash(block: dict):
     """
@@ -42,3 +45,21 @@ def tuple_vector_to_str(vector: list) -> str:
         temp.clear()
 
     return vec_str
+
+
+def int_to_bn128_FQ(int_num: int) -> bn128_FQ:
+    bn128_FQ.field_modulus = field_properties["bn128"]["field_modulus"]
+    return bn128_FQ(int_num)
+
+
+def reconstruct_ring_sig(sig: tuple):
+    # sig looks like
+    # ([(x, y), (x, y), (x, y)], [a, b, c], d) that x, y is type of bn128_FQ
+    reconstructed = [[]]
+    for pk in sig[0]:
+        reconstructed[0].append(tuple([int_to_bn128_FQ(xy) for xy in pk]))
+
+    reconstructed.append(sig[1])
+    reconstructed.append(sig[2])
+    return tuple(reconstructed)
+

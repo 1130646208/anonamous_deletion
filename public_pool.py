@@ -38,12 +38,16 @@ def register_nodes():
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    values = request.form
-    print(values)
+    values = request.json
+    if values:
+        data_dict = json.loads(values)
+    else:
+        response = {"message": "Empty Transaction!"}
+        return jsonify(response), 406
     # Create a new Transaction
     try:
-        public_tx_pool.submit_transaction(values.get("membership_proof"), values.get("transaction_type"),
-                                          values.get("content"))
+        public_tx_pool.submit_transaction(data_dict.get("membership_proof"), data_dict.get("transaction_type"),
+                                          data_dict.get("content"))
         response = {"message": "Transaction will be added to public tx pool"}
         return jsonify(response), 201
 

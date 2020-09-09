@@ -14,7 +14,7 @@ class RingSigHandler:
         pkey = sbmul(skey)
         return pkey, skey
 
-    def ring_signaturer(self, keys, msg):
+    def ring_signature(self, keys, msg):
         ring_sig = aosring_sign(*keys, message=msg)
         return ring_sig
 
