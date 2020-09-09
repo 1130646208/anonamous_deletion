@@ -1,5 +1,6 @@
 import rsa
 import rsa.common
+import base64 as b64
 from Crypto.Cipher import AES
 
 
@@ -59,4 +60,34 @@ class RSAHandler:
             d_crypto = rsa.decrypt(content, sk)
             d_cty_bytes = d_cty_bytes + d_crypto
         return d_cty_bytes
+
+    def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded: bool):
+        """
+        encrypt some secrets layer by layer
+        :param is_secrets_encoded:
+        :param pks:
+        :param secrets_to_be_encrypted:
+        :return:
+        """
+        assert len(pks) == len(secrets_to_be_encrypted)
+        result = b''
+        secrets_encoded = []
+        if not is_secrets_encoded:
+            secrets_encoded.append([b64.b64encode(secret) for secret in secrets_to_be_encrypted])
+        else:
+            secrets_encoded = secrets_to_be_encrypted
+            pks_iterable = iter(pks)
+            secrets_encoded_iterable = iter(secrets_encoded)
+            for times in range(len(pks)):
+                try:
+                    result += next(secrets_encoded_iterable)
+                    temp_result = self.rsa_enc_long_bytes(result, next(pks_iterable))
+                    temp_result_encoded = b64.b64encode(temp_result)
+                    result = temp_result_encoded
+                except StopIteration:
+                    return result
+
+
+
+
 
