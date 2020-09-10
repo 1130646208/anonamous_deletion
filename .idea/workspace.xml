@@ -193,7 +193,7 @@
       <workItem from="1599447295600" duration="25280000" />
       <workItem from="1599528308416" duration="27289000" />
       <workItem from="1599614039227" duration="27971000" />
-      <workItem from="1599700164434" duration="23528000" />
+      <workItem from="1599700164434" duration="23562000" />
     </task>
     <task id="LOCAL-00001" summary="add ip pool &amp; tx_pool">
       <created>1599290624622</created>
@@ -272,7 +272,14 @@
       <option name="project" value="LOCAL" />
       <updated>1599738584258</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="add rsa function: encrypt secrets layer by layer">
+      <created>1599738615591</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1599738615591</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
