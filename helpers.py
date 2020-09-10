@@ -63,3 +63,63 @@ def reconstruct_ring_sig(sig: tuple):
     reconstructed.append(sig[2])
     return tuple(reconstructed)
 
+
+# def strip_secret(wrapped_decrypted: bytes) -> tuple:
+#     """
+#     'wrapped_decrypted' looks like:
+#     b'Pds/mLaTMbcS0mhN8+SmlOoE2zq1KfvW6ymKPBa7lVcHwKPNFlTb/HrCU7TTQ=MjNhZGc4='
+#     b'Pds/mLaTMbcS0mhN8+SmlOoE2zq1KfvW6ymKPW9Uh+X7j8BRZxTb/HrCU7TTQ==..==MjNhZGc4=='
+#     ...
+#     :param wrapped_decrypted:
+#     :return: (b'Pds/mLaTMbcS0mhN8+SmlOoE2zq1KfvW6ymKPW9Uh+X7j8BRZxTb/HrCU7TTQ==', b'MjNhZGc4==')
+#     """
+#     # 如果是最后一个秘密的话，这里传入的wrapped_decrypted就直接是明文的base64
+#     # 怎么判断是不是最后一个秘密呢
+#     # 如果中间没有=（结尾也可能没有）就是最后一个秘密
+#     other_secrets, wanted_secret = None, None
+#     secret_r_bound_index = 0
+#     try:
+#         # 如果有 =
+#         secret_r_bound_index = wrapped_decrypted.index(b'=')
+#         # 判断是不是最后一个
+#         if secret_r_bound_index == len(wrapped_decrypted) - 1:
+#             wanted_secret = wrapped_decrypted
+#             return other_secrets, wanted_secret
+#     except:
+#         # 没有=
+#         wanted_secret = wrapped_decrypted
+#         return other_secrets, wanted_secret
+#
+#     # 有 = 并且不是最后一个
+#     # 不知道为什么bytes用下标读取出来是int类型，‘=’ 的int是61
+#     while wrapped_decrypted[secret_r_bound_index] == 61:
+#         secret_r_bound_index += 1
+#
+#     other_secrets = wrapped_decrypted[:secret_r_bound_index]
+#     wanted_secret = wrapped_decrypted[secret_r_bound_index:]
+#
+#     return other_secrets, wanted_secret
+
+def strip_secret(wrapped_decrypted: bytes) -> tuple:
+    has_equator = True
+    secret_r_bound_index = 0
+    try:
+        secret_r_bound_index = wrapped_decrypted.index(b'=')
+    except:
+        # 没有‘=’
+        has_equator = False
+        return None, wrapped_decrypted
+
+    if has_equator:
+        while wrapped_decrypted[secret_r_bound_index] == 61:
+            secret_r_bound_index += 1
+            if secret_r_bound_index == len(wrapped_decrypted) - 1:
+                break
+        # 在最后几个
+        if secret_r_bound_index == len(wrapped_decrypted) - 1:
+            return None, wrapped_decrypted
+
+        else:
+            other_secrets = wrapped_decrypted[:secret_r_bound_index]
+            wanted_secret = wrapped_decrypted[secret_r_bound_index:]
+            return other_secrets, wanted_secret

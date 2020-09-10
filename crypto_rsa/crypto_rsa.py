@@ -1,7 +1,10 @@
 import rsa
 import rsa.common
+from rsa.pkcs1 import DecryptionError
 import base64 as b64
 from Crypto.Cipher import AES
+
+from helpers import strip_secret
 
 
 class RSAHandler:
@@ -18,7 +21,8 @@ class RSAHandler:
         plain_text_encoded = rsa.decrypt(cipher, self.__sk)
         return plain_text_encoded.decode()
 
-    def rsa_enc_long_bytes(self, bytes_str, pub_key):
+    @staticmethod
+    def rsa_enc_long_bytes(bytes_str, pub_key):
         if not isinstance(bytes_str, bytes):
             return None
             # 导入rsa库
@@ -41,13 +45,14 @@ class RSAHandler:
 
         return cry_bytes
 
-    def rsa_dec_long_bytes(self, bytes_string, sk):
+    @staticmethod
+    def rsa_dec_long_bytes(bytes_string, sk):
         # 导入rsa库
         import rsa.common
         key_length = rsa.common.byte_size(sk['n'])
         if len(bytes_string) % key_length != 0:
             # 如果数据长度不是key_length的整数倍, 则数据是无效的
-            return None
+            raise ValueError('数据长度不是key_length的整数倍')
 
         count = len(bytes_string) // key_length
         d_cty_bytes = b''
@@ -61,10 +66,10 @@ class RSAHandler:
             d_cty_bytes = d_cty_bytes + d_crypto
         return d_cty_bytes
 
-    def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded: bool):
+    def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
         """
         encrypt some secrets layer by layer
-        :param is_secrets_encoded:
+        :param is_secrets_encoded_b64:
         :param pks:
         :param secrets_to_be_encrypted:
         :return:
@@ -72,22 +77,34 @@ class RSAHandler:
         assert len(pks) == len(secrets_to_be_encrypted)
         result = b''
         secrets_encoded = []
-        if not is_secrets_encoded:
-            secrets_encoded.append([b64.b64encode(secret) for secret in secrets_to_be_encrypted])
+        if not is_secrets_encoded_b64:
+            secrets_encoded = [b64.b64encode(secret) for secret in secrets_to_be_encrypted]
         else:
             secrets_encoded = secrets_to_be_encrypted
-            pks_iterable = iter(pks)
-            secrets_encoded_iterable = iter(secrets_encoded)
-            for times in range(len(pks)):
-                try:
-                    result += next(secrets_encoded_iterable)
-                    temp_result = self.rsa_enc_long_bytes(result, next(pks_iterable))
-                    temp_result_encoded = b64.b64encode(temp_result)
-                    result = temp_result_encoded
-                except StopIteration:
-                    return result
 
+        pks_iterable = iter(pks)
+        secrets_encoded_iterable = iter(secrets_encoded)
+        for times in range(len(pks)):
+            result += next(secrets_encoded_iterable)
+            temp_result = self.rsa_enc_long_bytes(result, next(pks_iterable))
+            temp_result_encoded = b64.b64encode(temp_result) + b'===='
+            result = temp_result_encoded
 
+        return result
 
-
+    def get_a_secret_from_wrapped(self, wrapped: bytes, sk) -> tuple:
+        """
+        decrypt a wrapped secret, and returns remainder wrapped secrets and wanted secret
+        :param sk:
+        :param wrapped:
+        :return:
+        """
+        wrapped_decoded = b64.b64decode(wrapped)
+        try:
+            wrapped_decrypted = self.rsa_dec_long_bytes(wrapped_decoded, sk)
+            other_secrets, wanted_secret = strip_secret(wrapped_decrypted)
+            return other_secrets, wanted_secret
+        except:
+            # 解密失败说明不是给自己的，直接return None
+            return None, None
 
