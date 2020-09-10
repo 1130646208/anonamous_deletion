@@ -18,23 +18,26 @@ class Client:
         self.__ip = ip
 
         # rsa_public_key is type :rsa.key.PublicKey
-        self.rsa_public_key = self.__rsa_handler.pk
+        self.rsa_public_key = self.__rsa_handler.key_pair.get('pk')
+        # 'ring_sig_public_key'虽然能够正确注册，看起来是tuple类型，但是其中含有bn128_FQ类型的数据
         self.ring_sig_public_key = self.__ring_sig_handler.key_pair.get('pk')
         self.__ring_sig_private_key = self.__ring_sig_handler.key_pair.get('sk')
         # ring_sig_key_pair : first is pk tuple(int, int), later is sk (int)
         self.__ring_sig_key_pair = [self.ring_sig_public_key, self.__ring_sig_private_key]
 
-    def register_node(self, ip, ring_sig_pk: tuple):
+    def register_node(self, ip: str, ring_sig_pk: tuple, rsa_pk: tuple):
         ring_sig_pk_str = tuple_vector_to_str([ring_sig_pk])
+        rsa_pk_str = tuple_vector_to_str([rsa_pk])
         form = json.dumps({
             "ip": ip,
-            "ring_sig_pk": ring_sig_pk_str
+            "ring_sig_pk": ring_sig_pk_str,
+            "rsa_pk": rsa_pk_str
         })
         try:
             r = requests.post("http://" + POOL_URL + ":" + POOL_PORT + "/nodes/register", json=form)
             print(r)
         except Exception as e:
-            print("client register error", e)
+            print("Client register error", e)
 
     def new_transaction(self, transaction_type: str, content: str):
         # 注意，这里的ring_sig_pks类型是[(int, int), (int, int)...]
@@ -84,6 +87,14 @@ class Client:
     @staticmethod
     def get_ring_sig_pks_from_pool() -> list:
         r = requests.get("http://" + POOL_URL + ":" + POOL_PORT + "/nodes/ring_sig_key")
+        if not r.status_code == 201:
+            return []
+
+        return str_vector_to_tuple(r.text)
+
+    @staticmethod
+    def get_rsa_pks_from_pool() -> list:
+        r = requests.get("http://" + POOL_URL + ":" + POOL_PORT + "/nodes/rsa_pub_key")
         if not r.status_code == 201:
             return []
 

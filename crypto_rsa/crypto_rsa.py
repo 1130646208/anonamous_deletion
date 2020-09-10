@@ -10,6 +10,7 @@ from helpers import strip_secret
 class RSAHandler:
     def __init__(self, bit_num=1024):
         self.pk, self.__sk = rsa.newkeys(bit_num)
+        self.key_pair = {'pk': (self.pk['n'], self.pk['e']), 'sk': self.__sk}
 
     def rsa_encrypt(self, plain_text: str) -> bytes:
         plain_text_encoded = plain_text.encode()

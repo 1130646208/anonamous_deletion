@@ -2,7 +2,7 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 import json
 
-from pools import public_ip_pool, public_tx_pool, public_ring_sig_pk_pool, POOL_URL, POOL_PORT
+from pools import public_ip_pool, public_tx_pool, public_ring_sig_pk_pool, public_rsa_pk_pool, POOL_URL, POOL_PORT
 from helpers import str_vector_to_tuple
 
 app = Flask(__name__)
@@ -74,6 +74,12 @@ def view_all_nodes():
 def get_ring_sig_pk_pool():
     # 'get_all_pks' returns str
     return public_ring_sig_pk_pool.get_all_pks(), 201
+
+
+@app.route('/nodes/rsa_pub_key', methods=['GET'])
+def get_rsa_pk_pool():
+    # 'get_all_pks' returns str
+    return public_rsa_pk_pool.get_all_pks(), 201
 
 
 if __name__ == '__main__':
