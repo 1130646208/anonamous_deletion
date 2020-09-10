@@ -68,7 +68,7 @@ class RSAHandler:
 
     def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
         """
-        encrypt some secrets layer by layer
+        encrypt some secrets layer by layer. ATTENTIOIN!! secret  can not be empty.
         :param is_secrets_encoded_b64:
         :param pks:
         :param secrets_to_be_encrypted:

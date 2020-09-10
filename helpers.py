@@ -112,8 +112,9 @@ def strip_secret(wrapped_decrypted: bytes) -> tuple:
 
     if has_equator:
         while wrapped_decrypted[secret_r_bound_index] == 61:
-            secret_r_bound_index += 1
-            if secret_r_bound_index == len(wrapped_decrypted) - 1:
+            if secret_r_bound_index < len(wrapped_decrypted) - 1:
+                secret_r_bound_index += 1
+            else:
                 break
         # 在最后几个
         if secret_r_bound_index == len(wrapped_decrypted) - 1:
