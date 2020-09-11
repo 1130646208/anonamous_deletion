@@ -15,13 +15,15 @@ class Client:
         self.chain = BlockChain()
         self.__ring_sig_handler = RingSigHandler()
         self.__rsa_handler = RSAHandler()
-        self.__ip = ip
+        self.ip = ip
 
+        # register variables
         # rsa_public_key is type :rsa.key.PublicKey
-        self.rsa_public_key = self.__rsa_handler.key_pair.get('pk')
+        self.rsa_public_key = self.__rsa_handler.pk
         # 'ring_sig_public_key'虽然能够正确注册，看起来是tuple类型，但是其中含有bn128_FQ类型的数据
         self.ring_sig_public_key = self.__ring_sig_handler.key_pair.get('pk')
         self.__ring_sig_private_key = self.__ring_sig_handler.key_pair.get('sk')
+
         # ring_sig_key_pair : first is pk tuple(int, int), later is sk (int)
         self.__ring_sig_key_pair = [self.ring_sig_public_key, self.__ring_sig_private_key]
 
@@ -35,9 +37,9 @@ class Client:
         })
         try:
             r = requests.post("http://" + POOL_URL + ":" + POOL_PORT + "/nodes/register", json=form)
-            print(r)
+            print("Client {} says: registered, response from pool is {}.".format(ip, r))
         except Exception as e:
-            print("Client register error", e)
+            print("Client {} says register error {}.".format(ip, e))
 
     def new_transaction(self, transaction_type: str, content: str):
         # 注意，这里的ring_sig_pks类型是[(int, int), (int, int)...]
@@ -58,9 +60,9 @@ class Client:
         })
         try:
             r = requests.post("http://" + POOL_URL + ":" + POOL_PORT + "/transactions/new", json=form)
-            print(r)
+            print("Client {} says: transaction submitted, response from pool is {}.".format(self.ip, r))
         except Exception as e:
-            print("client submit transaction error", e)
+            print("Client {} says: transaction submit error.".format(self.ip, e))
 
     def gen_membership_proof(self, pks: list, msg: str):
         msg_digest = md5(msg.encode()).digest()
@@ -70,7 +72,7 @@ class Client:
             return ring_sig
 
         except:
-            print('client {} failed gen_membership_proof.'.format(self.__ip))
+            print('Client {} failed gen_membership_proof.'.format(self.ip))
         return None
 
     def verify_ring_signature(self, sig, msg: str):

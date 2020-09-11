@@ -1,20 +1,24 @@
 import rsa
+from rsa.key import PublicKey
 import rsa.common
 from rsa.pkcs1 import DecryptionError
 import base64 as b64
 from Crypto.Cipher import AES
 
-from helpers import strip_secret
+from helpers import strip_secret, rsa_pk_to_tuple
 
 
 class RSAHandler:
     def __init__(self, bit_num=1024):
-        self.pk, self.__sk = rsa.newkeys(bit_num)
-        self.key_pair = {'pk': (self.pk['n'], self.pk['e']), 'sk': self.__sk}
+        self.__pk, self.__sk = rsa.newkeys(bit_num)
+        # 'pk' for web transfer
+        self.pk = rsa_pk_to_tuple(self.__pk)
+        # 'key_pair' for internal or Client call
+        self.key_pair = {'pk': self.__pk, 'sk': self.__sk}
 
     def rsa_encrypt(self, plain_text: str) -> bytes:
         plain_text_encoded = plain_text.encode()
-        cipher_encoded = rsa.encrypt(plain_text_encoded, self.pk)
+        cipher_encoded = rsa.encrypt(plain_text_encoded, self.__pk)
         print(type(cipher_encoded))
         return cipher_encoded
 

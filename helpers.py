@@ -47,6 +47,10 @@ def tuple_vector_to_str(vector: list) -> str:
     return vec_str
 
 
+def rsa_pk_to_tuple(rsa_pk):
+    return rsa_pk['n'], rsa_pk['e']
+
+
 def int_to_bn128_FQ(int_num: int) -> bn128_FQ:
     bn128_FQ.field_modulus = field_properties["bn128"]["field_modulus"]
     return bn128_FQ(int_num)

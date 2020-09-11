@@ -17,6 +17,7 @@ def register_nodes():
     # 所以要用getlist才能获得所有的ring_sig_pk,但是变成str类型的了，需要转化成int类型
     ip = data.get("ip")
     ring_sig_pk = data.get("ring_sig_pk")
+    rsa_pk = data.get("rsa_pk")
 
     if ip is None:
         return "Error: Please supply a valid ip.", 400
@@ -24,14 +25,19 @@ def register_nodes():
     if ring_sig_pk is None:
         return "Error: Please supply a valid ring_sig_pk.", 400
 
+    if rsa_pk is None:
+        return "Error: Please supply a valid rsa_pk.", 400
+
     public_ip_pool.add_ip(ip)
     # because 'str_vector_to_tuple' returns list, it is necessary to write [0]
     public_ring_sig_pk_pool.add_pk(str_vector_to_tuple(ring_sig_pk)[0])
+    public_rsa_pk_pool.add_pk(str_vector_to_tuple(rsa_pk)[0])
 
     response = {
-        "message": "New nodes have been added.",
-        "total_nodes": [ip for ip in public_ip_pool.ips],
-        "total_ring_sig_pks": [ring_sig_pk for ring_sig_pk in public_ring_sig_pk_pool.pks]
+        "Message from public pools": "New node have been added.",
+        "nodes IPs": [ip for ip in public_ip_pool.ips],
+        "ring_sig_pks": [ring_sig_pk for ring_sig_pk in public_ring_sig_pk_pool.pks],
+        "rsa_pub_keys": [rsa_pk for rsa_pk in public_rsa_pk_pool.pks]
     }
     return jsonify(response), 201
 
@@ -65,8 +71,10 @@ def view_all_transactions():
 
 @app.route('/nodes/all', methods=['GET'])
 def view_all_nodes():
-    response = {"message": "all registered nodes:" + str(public_ip_pool.ips) + '\n' +
-                           str(public_ring_sig_pk_pool.pks)}
+    response = {"message":
+                "IPs:" + str(public_ip_pool.ips) +
+                "RING_SIG_PKs:" + str(public_ring_sig_pk_pool.pks) +
+                "RSA_PUB_KEYs:" + str(public_rsa_pk_pool.pks)}
     return jsonify(response), 201
 
 
