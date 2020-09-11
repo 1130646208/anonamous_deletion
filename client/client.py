@@ -3,9 +3,10 @@ import json
 import requests
 
 from crypto_rsa.crypto_rsa import RSAHandler
+from ring_signature.ring_signature_handler import RingSigHandler
+from secret_sharing import Base64ToBase64SecretSharer
 from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ
 from pools import POOL_URL, POOL_PORT
-from ring_signature.ring_signature_handler import RingSigHandler
 from .block_chain import BlockChain
 
 
@@ -14,12 +15,13 @@ class Client:
     def __init__(self, ip=None):
         self.chain = BlockChain()
         self.__ring_sig_handler = RingSigHandler()
-        self.__rsa_handler = RSAHandler()
+        self.rsa_handler = RSAHandler()
+        self.b2bss = Base64ToBase64SecretSharer()
         self.ip = ip
 
         # register variables
         # rsa_public_key is type :rsa.key.PublicKey
-        self.rsa_public_key = self.__rsa_handler.pk
+        self.rsa_public_key = self.rsa_handler.pk
         # 'ring_sig_public_key'虽然能够正确注册，看起来是tuple类型，但是其中含有bn128_FQ类型的数据
         self.ring_sig_public_key = self.__ring_sig_handler.key_pair.get('pk')
         self.__ring_sig_private_key = self.__ring_sig_handler.key_pair.get('sk')
@@ -101,3 +103,23 @@ class Client:
             return []
 
         return str_vector_to_tuple(r.text)
+
+    def split_secret(self, secret: bytes, threshold: int, total: int) -> list:
+        # b'aGVsbG8gISEhIHNlY3JldCBzaGFyZSEhIQ===='(bytes) -> 'aGVsbG8gISEhIHNlY3JldCBzaGFyZSEhIQ'(str)
+        """
+        :param secret: base64 format
+        :param threshold:
+        :param total:
+        :return:
+        """
+        secret_striped = str(secret)[2:-1].rstrip("=")
+        return self.b2bss.split_secret(secret_striped, threshold, total)
+
+    def recover_secret(self, shares: list) -> bytes:
+        """
+        :param shares:
+        :return: base64 format
+        """
+        secret_string = self.b2bss.recover_secret(shares)
+        secret_b64 = bytes(secret_string.encode()) + b"===="
+        return secret_b64

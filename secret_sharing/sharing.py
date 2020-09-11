@@ -11,7 +11,7 @@ import string
 
 from six import integer_types
 from utilitybelt import int_to_charset, charset_to_int, base58_chars, \
-    base32_chars, zbase32_chars
+    base32_chars, zbase32_chars, base64_chars
 from .primes import get_large_enough_prime
 from .polynomials import random_polynomial, \
     get_polynomial_points, modular_lagrange_interpolation
@@ -91,10 +91,10 @@ def share_string_to_point(share_string, charset):
         raise ValueError("Share has characters that aren't in the charset.")
     x = charset_to_int(x_string, charset)
     y = charset_to_int(y_string, charset)
-    return (x, y)
+    return x, y
 
 
-class SecretSharer():
+class SecretSharer:
     """ Creates a secret sharer, which can convert from a secret string to a
         list of shares and vice versa. The splitter is initialized with the
         character set of the secrets and the character set of the shares that
@@ -161,3 +161,8 @@ class BitcoinToZB32SecretSharer(SecretSharer):
     """
     secret_charset = base58_chars
     share_charset = zbase32_chars
+
+
+class Base64ToBase64SecretSharer(SecretSharer):
+    secret_charset = base64_chars
+    share_charset = base64_chars

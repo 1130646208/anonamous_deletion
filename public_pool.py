@@ -13,8 +13,6 @@ CORS(app)
 def register_nodes():
     values = request.json
     data = json.loads(values)
-    # 从client_main 传过来的是ImmutableMultiDict('ip':aaa, 'ring_sig_pk': xxx, 'ring_sig_pk': yyy)
-    # 所以要用getlist才能获得所有的ring_sig_pk,但是变成str类型的了，需要转化成int类型
     ip = data.get("ip")
     ring_sig_pk = data.get("ring_sig_pk")
     rsa_pk = data.get("rsa_pk")

@@ -16,6 +16,7 @@ def start_some_clients(n):
     # sig = client1.gen_membership_proof(pks, "1234568")
     # client3.verify_ring_signature(sig, "1234568")
 
+    # client3.rsa_handler.
     client3.new_transaction(transaction_type="txdata", content="this is wrapped secret")
 
 
