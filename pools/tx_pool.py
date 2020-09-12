@@ -131,3 +131,4 @@ class TxPool:
         :return:
         """
         self.txs.pop(invalid_proof)
+
