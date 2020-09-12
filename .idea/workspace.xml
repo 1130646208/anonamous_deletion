@@ -2,14 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b2173881-96d4-4d0e-ae38-76fc9dbb779d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/test_my_secret_share.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crypto_rsa/crypto_rsa.py" beforeDir="false" afterPath="$PROJECT_DIR$/crypto_rsa/crypto_rsa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/helpers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pools/tx_pool.py" beforeDir="false" afterPath="$PROJECT_DIR$/pools/tx_pool.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public_pool.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_pool.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/secret_sharing/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/secret_sharing/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/secret_sharing/sharing.py" beforeDir="false" afterPath="$PROJECT_DIR$/secret_sharing/sharing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_secret_sharing.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_secret_sharing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_my_secret_share.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_my_secret_share.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +64,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.test_my_secret_share">
+  <component name="RunManager" selected="Python.client_main">
     <configuration name="client_main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="anonamous_deletion" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -161,9 +163,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test_my_secret_share" />
         <item itemvalue="Python.client_main" />
         <item itemvalue="Python.public_pool" />
+        <item itemvalue="Python.test_my_secret_share" />
         <item itemvalue="Python tests.Unittests for test_secret_sharing.ShamirSharingTest.test_b64_to_b64_sharing" />
         <item itemvalue="Python tests.Unittests for test_secret_sharing.ShamirSharingTest.test_hex_to_hex_sharing" />
       </list>
@@ -190,7 +192,8 @@
       <workItem from="1599528308416" duration="27289000" />
       <workItem from="1599614039227" duration="27971000" />
       <workItem from="1599700164434" duration="30710000" />
-      <workItem from="1599786332494" duration="20556000" />
+      <workItem from="1599786332494" duration="20778000" />
+      <workItem from="1599891457438" duration="12524000" />
     </task>
     <task id="LOCAL-00001" summary="add ip pool &amp; tx_pool">
       <created>1599290624622</created>
@@ -304,7 +307,14 @@
       <option name="project" value="LOCAL" />
       <updated>1599814564924</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="nothing changed">
+      <created>1599829534233</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1599829534233</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -333,10 +343,10 @@
     <MESSAGE value="add omitted files" />
     <MESSAGE value="rsa can encrypt and decrypt long bytes" />
     <MESSAGE value="add rsa function: encrypt secrets layer by layer" />
-    <MESSAGE value="nothing changed" />
     <MESSAGE value="add rsa public key pool" />
     <MESSAGE value="add secret sharing lib" />
-    <option name="LAST_COMMIT_MESSAGE" value="add secret sharing lib" />
+    <MESSAGE value="nothing changed" />
+    <option name="LAST_COMMIT_MESSAGE" value="nothing changed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -357,7 +367,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/anonamous_deletion$my_ring_test.coverage" NAME="my_ring_test Coverage Results" MODIFIED="1599448158452" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ring_signature" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_ring_signature.coverage" NAME="test_ring_signature Coverage Results" MODIFIED="1599636522738" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/anonamous_deletion$test_my_secret_share.coverage" NAME="test_my_secret_share Coverage Results" MODIFIED="1599828353946" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$test_my_secret_share.coverage" NAME="test_my_secret_share Coverage Results" MODIFIED="1599896160419" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_bn128_FQ.coverage" NAME="test_bn128_FQ Coverage Results" MODIFIED="1599622061234" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_tx_pool.coverage" NAME="test_tx_pool Coverage Results" MODIFIED="1599297000278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$blockchain.coverage" NAME="blockchain Coverage Results" MODIFIED="1599140044024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/client" />
@@ -367,11 +377,11 @@
     <SUITE FILE_PATH="coverage/anonamous_deletion$client.coverage" NAME="client Coverage Results" MODIFIED="1599809862480" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/client" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_str_to_hex.coverage" NAME="test_str_to_hex Coverage Results" MODIFIED="1599555139087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_rsa_enc_dec.coverage" NAME="test_rsa_enc_dec Coverage Results" MODIFIED="1599742231791" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/anonamous_deletion$public_pool.coverage" NAME="public_pool Coverage Results" MODIFIED="1599825500648" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$public_pool.coverage" NAME="public_pool Coverage Results" MODIFIED="1599911244023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$ring_sig_pk_pool.coverage" NAME="ring_sig_pk_pool Coverage Results" MODIFIED="1599470664337" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pools" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_requests.coverage" NAME="test_requests Coverage Results" MODIFIED="1599565569140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$Unittests_for_test_secret_sharing_ShamirSharingTest_test_hex_to_hex_sharing.coverage" NAME="Unittests for test_secret_sharing.ShamirSharingTest.test_hex_to_hex_sharing Coverage Results" MODIFIED="1599825095935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/anonamous_deletion$client_main.coverage" NAME="client_main Coverage Results" MODIFIED="1599825549340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/anonamous_deletion$client_main.coverage" NAME="client_main Coverage Results" MODIFIED="1599911248813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_strip_secret.coverage" NAME="test_strip_secret Coverage Results" MODIFIED="1599810316351" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$test_reconstruct_ring_sig.coverage" NAME="test_reconstruct_ring_sig Coverage Results" MODIFIED="1599638006126" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/anonamous_deletion$Unittests_for_test_secret_sharing_ShamirSharingTest_test_b64_to_b64_sharing.coverage" NAME="Unittests for test_secret_sharing.ShamirSharingTest.test_b64_to_b64_sharing Coverage Results" MODIFIED="1599825110551" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />

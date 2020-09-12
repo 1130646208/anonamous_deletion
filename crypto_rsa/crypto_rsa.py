@@ -12,7 +12,7 @@ class RSAHandler:
     def __init__(self, bit_num=1024):
         self.__pk, self.__sk = rsa.newkeys(bit_num)
         # 'pk' for web transfer
-        self.pk = rsa_pk_to_tuple(self.__pk)
+        self.pk_tuple = rsa_pk_to_tuple(self.__pk)
         # 'key_pair' for internal or Client call
         self.key_pair = {'pk': self.__pk, 'sk': self.__sk}
 
@@ -73,7 +73,7 @@ class RSAHandler:
 
     def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
         """
-        encrypt some secrets layer by layer. ATTENTIOIN!! secret  can not be empty.
+        encrypt some secrets layer by layer. ATTENTION!! secret  can not be empty.
         :param is_secrets_encoded_b64:
         :param pks:
         :param secrets_to_be_encrypted:

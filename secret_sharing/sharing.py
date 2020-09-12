@@ -164,5 +164,12 @@ class BitcoinToZB32SecretSharer(SecretSharer):
 
 
 class Base64ToBase64SecretSharer(SecretSharer):
+
     secret_charset = base64_chars
     share_charset = base64_chars
+
+
+class Base64ToHexSecretSharer(SecretSharer):
+
+    secret_charset = base64_chars
+    share_charset = string.hexdigits[0:16]

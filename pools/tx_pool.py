@@ -2,6 +2,7 @@ import hashlib
 import time
 import random
 from typing import Dict
+import base64 as b64
 
 from helpers import reconstruct_ring_sig
 from ring_signature.ring_signature_handler import RingSigHandler
@@ -33,7 +34,7 @@ class TxPool:
         else:
             raise ValueError("添加的交易不合法")
 
-    def submit_transaction(self, membership_proof, transaction_type, content) -> bool:
+    def submit_transaction(self, membership_proof: str, transaction_type, content) -> bool:
         """
         Add a transaction to public transaction pool
         make transaction id unique
@@ -51,12 +52,13 @@ class TxPool:
                        "timestamp": str(current_time)}
 
         if self.txs_num < self.max_transactions_limit:
-            self.add_tx(membership_proof, transaction)
+            membership_proof_encoded = b64.b64encode(membership_proof.encode())
+            self.add_tx(str(membership_proof_encoded), transaction)
             return True
 
         return False
 
-    def verify_transaction_membership(self, proof, msg):
+    def verify_transaction_membership(self, proof: str, msg):
         """
         verify a whether transaction's membership_proof is valid or not
         :return:

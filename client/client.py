@@ -4,8 +4,8 @@ import requests
 
 from crypto_rsa.crypto_rsa import RSAHandler
 from ring_signature.ring_signature_handler import RingSigHandler
-from secret_sharing import Base64ToBase64SecretSharer
-from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ
+from secret_sharing import Base64ToHexSecretSharer
+from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, reconstruct_rsa_pk
 from pools import POOL_URL, POOL_PORT
 from .block_chain import BlockChain
 
@@ -16,12 +16,13 @@ class Client:
         self.chain = BlockChain()
         self.__ring_sig_handler = RingSigHandler()
         self.rsa_handler = RSAHandler()
-        self.b2bss = Base64ToBase64SecretSharer()
+        self.b2hss = Base64ToHexSecretSharer()
         self.ip = ip
 
         # register variables
-        # rsa_public_key is type :rsa.key.PublicKey
-        self.rsa_public_key = self.rsa_handler.pk
+        self.rsa_public_key_tuple = self.rsa_handler.pk_tuple
+        self.rsa_public_key_origin = self.rsa_handler.key_pair.get('pk')
+
         # 'ring_sig_public_key'虽然能够正确注册，看起来是tuple类型，但是其中含有bn128_FQ类型的数据
         self.ring_sig_public_key = self.__ring_sig_handler.key_pair.get('pk')
         self.__ring_sig_private_key = self.__ring_sig_handler.key_pair.get('sk')
@@ -101,8 +102,8 @@ class Client:
         r = requests.get("http://" + POOL_URL + ":" + POOL_PORT + "/nodes/rsa_pub_key")
         if not r.status_code == 201:
             return []
-
-        return str_vector_to_tuple(r.text)
+        tuple_rsa_pk = str_vector_to_tuple(r.text)
+        return [reconstruct_rsa_pk(pk) for pk in tuple_rsa_pk]
 
     def split_secret(self, secret: bytes, threshold: int, total: int) -> list:
         # b'aGVsbG8gISEhIHNlY3JldCBzaGFyZSEhIQ===='(bytes) -> 'aGVsbG8gISEhIHNlY3JldCBzaGFyZSEhIQ'(str)
@@ -112,14 +113,16 @@ class Client:
         :param total:
         :return:
         """
+
         secret_striped = str(secret)[2:-1].rstrip("=")
-        return self.b2bss.split_secret(secret_striped, threshold, total)
+        return self.b2hss.split_secret(secret_striped, threshold, total)
 
     def recover_secret(self, shares: list) -> bytes:
         """
         :param shares:
         :return: base64 format
         """
-        secret_string = self.b2bss.recover_secret(shares)
+
+        secret_string = self.b2hss.recover_secret(shares)
         secret_b64 = bytes(secret_string.encode()) + b"===="
         return secret_b64

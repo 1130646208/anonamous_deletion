@@ -8,7 +8,7 @@ from helpers import str_vector_to_tuple
 app = Flask(__name__)
 CORS(app)
 
-
+# api
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
     values = request.json
@@ -39,7 +39,7 @@ def register_nodes():
     }
     return jsonify(response), 201
 
-
+# api
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     values = request.json
@@ -60,10 +60,10 @@ def new_transaction():
         response = {"message": "Invalid Transaction!"}
         return jsonify(response), 406
 
-
+# api
 @app.route('/transactions/all', methods=['GET'])
 def view_all_transactions():
-    response = {"transactions": str(public_tx_pool.txs)}
+    response = public_tx_pool.txs
     return jsonify(response), 201
 
 
@@ -75,13 +75,13 @@ def view_all_nodes():
                 "RSA_PUB_KEYs:" + str(public_rsa_pk_pool.pks)}
     return jsonify(response), 201
 
-
+# api
 @app.route('/nodes/ring_sig_key', methods=['GET'])
 def get_ring_sig_pk_pool():
     # 'get_all_pks' returns str
     return public_ring_sig_pk_pool.get_all_pks(), 201
 
-
+# api
 @app.route('/nodes/rsa_pub_key', methods=['GET'])
 def get_rsa_pk_pool():
     # 'get_all_pks' returns str
@@ -96,3 +96,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
     app.run(host=POOL_URL, port=port)
+
