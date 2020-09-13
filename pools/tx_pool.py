@@ -18,8 +18,12 @@ class TxPool:
         # tx looks like {'a_member_proof': 'some_tx(Dict)'}
         # because txs is a dict, so 'a_member_proof' can not be the same
         self.txs = dict()
-        self.txs_num = len(self.txs)
+
         self.max_transactions_limit = MAX_TRANSACTIONS_LIMIT
+
+    @property
+    def txs_num(self):
+        return len(self.txs)
 
     def add_tx(self, member_proof, new_tx: Dict):
         """

@@ -3,7 +3,6 @@ import hashlib
 import time
 from urllib.parse import urlparse
 from uuid import uuid4
-
 import requests
 
 
@@ -40,9 +39,6 @@ class BlockChain:
             self.nodes.add(parsed_url.path)
         else:
             raise ValueError('Invalid URL')
-
-    def verify_membership_proof(self, proof):
-        return True
 
     def create_block(self, nonce, previous_hash):
         """

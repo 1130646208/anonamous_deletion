@@ -71,45 +71,44 @@ class RSAHandler:
             d_cty_bytes = d_cty_bytes + d_crypto
         return d_cty_bytes
 
-    def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
-        """
-        encrypt some secrets layer by layer. ATTENTION!! secret  can not be empty.
-        :param is_secrets_encoded_b64:
-        :param pks:
-        :param secrets_to_be_encrypted:
-        :return:
-        """
-        assert len(pks) == len(secrets_to_be_encrypted)
-        result = b''
-        secrets_encoded = []
-        if not is_secrets_encoded_b64:
-            secrets_encoded = [b64.b64encode(secret) for secret in secrets_to_be_encrypted]
-        else:
-            secrets_encoded = secrets_to_be_encrypted
+    # def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
+    #     """
+    #     encrypt some secrets layer by layer. ATTENTION!! secret  can not be empty.
+    #     :param is_secrets_encoded_b64:
+    #     :param pks:
+    #     :param secrets_to_be_encrypted:
+    #     :return:
+    #     """
+    #     assert len(pks) == len(secrets_to_be_encrypted)
+    #     result = b''
+    #     secrets_encoded = []
+    #     if not is_secrets_encoded_b64:
+    #         secrets_encoded = [b64.b64encode(secret) for secret in secrets_to_be_encrypted]
+    #     else:
+    #         secrets_encoded = secrets_to_be_encrypted
+    #
+    #     pks_iterable = iter(pks)
+    #     secrets_encoded_iterable = iter(secrets_encoded)
+    #     for times in range(len(pks)):
+    #         result += next(secrets_encoded_iterable)
+    #         temp_result = self.rsa_enc_long_bytes(result, next(pks_iterable))
+    #         temp_result_encoded = b64.b64encode(temp_result) + b'===='
+    #         result = temp_result_encoded
+    #
+    #     return result
 
-        pks_iterable = iter(pks)
-        secrets_encoded_iterable = iter(secrets_encoded)
-        for times in range(len(pks)):
-            result += next(secrets_encoded_iterable)
-            temp_result = self.rsa_enc_long_bytes(result, next(pks_iterable))
-            temp_result_encoded = b64.b64encode(temp_result) + b'===='
-            result = temp_result_encoded
-
-        return result
-
-    def get_a_secret_from_wrapped(self, wrapped: bytes, sk) -> tuple:
-        """
-        decrypt a wrapped secret, and returns remainder wrapped secrets and wanted secret
-        :param sk:
-        :param wrapped:
-        :return:
-        """
-        wrapped_decoded = b64.b64decode(wrapped)
-        try:
-            wrapped_decrypted = self.rsa_dec_long_bytes(wrapped_decoded, sk)
-            other_secrets, wanted_secret = strip_secret(wrapped_decrypted)
-            return other_secrets, wanted_secret
-        except:
-            # 解密失败说明不是给自己的，直接return None
-            return None, None
-
+    # def get_a_secret_from_wrapped(self, wrapped: bytes, sk) -> tuple:
+    #     """
+    #     decrypt a wrapped secret, and returns remainder wrapped secrets and wanted secret
+    #     :param sk:
+    #     :param wrapped:
+    #     :return:
+    #     """
+    #     wrapped_decoded = b64.b64decode(wrapped)
+    #     try:
+    #         wrapped_decrypted = self.rsa_dec_long_bytes(wrapped_decoded, sk)
+    #         other_secrets, wanted_secret = strip_secret(wrapped_decrypted)
+    #         return other_secrets, wanted_secret
+    #     except:
+    #         # 解密失败说明不是给自己的，直接return None
+    #         return None, None

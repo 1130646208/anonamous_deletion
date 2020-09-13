@@ -1,11 +1,13 @@
 from hashlib import md5
 import json
 import requests
+import base64 as b64
+from rsa.key import PrivateKey
 
 from crypto_rsa.crypto_rsa import RSAHandler
 from ring_signature.ring_signature_handler import RingSigHandler
 from secret_sharing import Base64ToHexSecretSharer
-from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, reconstruct_rsa_pk
+from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, reconstruct_rsa_pk, strip_secret
 from pools import POOL_URL, POOL_PORT
 from .block_chain import BlockChain
 
@@ -22,6 +24,9 @@ class Client:
         # register variables
         self.rsa_public_key_tuple = self.rsa_handler.pk_tuple
         self.rsa_public_key_origin = self.rsa_handler.key_pair.get('pk')
+        self.rsa_public_key_origin = self.rsa_handler.key_pair.get('pk')
+        # test
+        self.rsa_private_key_origin = self.rsa_handler.key_pair.get('sk')
 
         # 'ring_sig_public_key'虽然能够正确注册，看起来是tuple类型，但是其中含有bn128_FQ类型的数据
         self.ring_sig_public_key = self.__ring_sig_handler.key_pair.get('pk')
@@ -126,3 +131,53 @@ class Client:
         secret_string = self.b2hss.recover_secret(shares)
         secret_b64 = bytes(secret_string.encode()) + b"===="
         return secret_b64
+
+    def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
+        """
+        encrypt some secrets layer by layer. ATTENTION!! secret  can not be empty.
+        :param is_secrets_encoded_b64:
+        :param pks:
+        :param secrets_to_be_encrypted:
+        :return:
+        """
+        assert len(pks) == len(secrets_to_be_encrypted)
+        result = b''
+        secrets_encoded = []
+        if not is_secrets_encoded_b64:
+            secrets_encoded = [b64.b64encode(secret) for secret in secrets_to_be_encrypted]
+        else:
+            secrets_encoded = secrets_to_be_encrypted
+
+        pks_iterable = iter(pks)
+        secrets_encoded_iterable = iter(secrets_encoded)
+        for times in range(len(pks)):
+            result += next(secrets_encoded_iterable)
+            temp_result = self.rsa_handler.rsa_enc_long_bytes(result, next(pks_iterable))
+            temp_result_encoded = b64.b64encode(temp_result) + b'===='
+            result = temp_result_encoded
+
+        return result
+
+    def get_a_secret_from_wrapped(self, wrapped: bytes, sk) -> tuple:
+        """
+        decrypt a wrapped secret, and returns remainder wrapped secrets and wanted secret
+        :param sk:
+        :param wrapped:
+        :return:
+        """
+        if not isinstance(wrapped, bytes):
+            print('Wrapped secret type error.', wrapped)
+            return None, None
+
+        if not isinstance(sk, PrivateKey):
+            print('RSA private key type error.', wrapped)
+            return None, None
+
+        wrapped_decoded = b64.b64decode(wrapped)
+        try:
+            wrapped_decrypted = self.rsa_handler.rsa_dec_long_bytes(wrapped_decoded, sk)
+            other_secrets, wanted_secret = strip_secret(wrapped_decrypted)
+            return other_secrets, wanted_secret
+        except:
+            # 解密失败说明不是给自己的，直接return None
+            return None, None

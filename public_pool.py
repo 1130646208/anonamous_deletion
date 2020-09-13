@@ -8,6 +8,8 @@ from helpers import str_vector_to_tuple
 app = Flask(__name__)
 CORS(app)
 
+
+# ########################### api for machine
 # api
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
@@ -39,6 +41,7 @@ def register_nodes():
     }
     return jsonify(response), 201
 
+
 # api
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
@@ -60,32 +63,70 @@ def new_transaction():
         response = {"message": "Invalid Transaction!"}
         return jsonify(response), 406
 
+
 # api
 @app.route('/transactions/all', methods=['GET'])
-def view_all_transactions():
+def get_all_transactions():
     response = public_tx_pool.txs
     return jsonify(response), 201
 
 
+# api
+@app.route('/transactions/get', methods=['GET'])
+def get_transactions_to_pack():
+    pass
+
+
 @app.route('/nodes/all', methods=['GET'])
-def view_all_nodes():
-    response = {"message":
-                "IPs:" + str(public_ip_pool.ips) +
-                "RING_SIG_PKs:" + str(public_ring_sig_pk_pool.pks) +
-                "RSA_PUB_KEYs:" + str(public_rsa_pk_pool.pks)}
+def get_all_nodes():
+    response = {"IPs": str(public_ip_pool.ips),
+                "RING_SIG_PKs": str(public_ring_sig_pk_pool.pks),
+                "RSA_PUB_KEYs": str(public_rsa_pk_pool.pks)
+                }
     return jsonify(response), 201
+
 
 # api
 @app.route('/nodes/ring_sig_key', methods=['GET'])
-def get_ring_sig_pk_pool():
+def get_ring_sig_pk_pool_in_str():
     # 'get_all_pks' returns str
     return public_ring_sig_pk_pool.get_all_pks(), 201
 
+
 # api
 @app.route('/nodes/rsa_pub_key', methods=['GET'])
-def get_rsa_pk_pool():
+def get_rsa_pk_pool_in_str():
     # 'get_all_pks' returns str
     return public_rsa_pk_pool.get_all_pks(), 201
+
+
+# ############################################### api for human
+# api
+@app.route('/view/ring_sig_key', methods=['GET'])
+def view_ring_sig_pk_pool():
+    # 'get_all_pks' returns str
+    response = {"total": public_ring_sig_pk_pool.pk_num,
+                "ring": public_ring_sig_pk_pool.get_all_pks()
+                }
+    return jsonify(response), 201
+
+
+# api
+@app.route('/view/rsa_pub_key', methods=['GET'])
+def view_rsa_pk_pool():
+    # 'get_all_pks' returns str
+    response = {"total": public_rsa_pk_pool.pk_num,
+                "rsa": public_rsa_pk_pool.get_all_pks()
+                }
+    return jsonify(response), 201
+
+# api
+@app.route('/view/transactions', methods=['GET'])
+def view_all_transactions():
+    response = {"total": public_tx_pool.txs_num,
+                "transactions": public_tx_pool.txs
+                }
+    return jsonify(response), 201
 
 
 if __name__ == '__main__':
@@ -96,4 +137,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
     app.run(host=POOL_URL, port=port)
-

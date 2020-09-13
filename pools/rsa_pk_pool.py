@@ -7,8 +7,7 @@ class RSAPKPool:
     def __init__(self):
         self.pks = set()
         # self.pks looks like {(int1, int2), (int3, int4)}
-        self.pk_num = len(self.pks)
-        # len() returns tuple number in set 'pks'
+
         self.max_pk_num_limit = MAX_PK_NUM_LIMIT
 
     def get_all_pks(self) -> str:
@@ -40,3 +39,8 @@ class RSAPKPool:
             return True
 
         return False
+
+    @property
+    def pk_num(self):
+        # len() returns tuple number in set 'pks'
+        return len(self.pks)
