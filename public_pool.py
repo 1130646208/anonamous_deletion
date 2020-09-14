@@ -74,7 +74,8 @@ def get_all_transactions():
 # api
 @app.route('/transactions/get', methods=['GET'])
 def get_transactions_to_pack():
-    pass
+    response = public_tx_pool.return_txs()
+    return str(response), 201
 
 
 @app.route('/nodes/all', methods=['GET'])
@@ -98,6 +99,15 @@ def get_ring_sig_pk_pool_in_str():
 def get_rsa_pk_pool_in_str():
     # 'get_all_pks' returns str
     return public_rsa_pk_pool.get_all_pks(), 201
+
+# /transactions/drop can be visited by everyone, pay attention to security
+@app.route('/transactions/drop', methods=['POST'])
+def drop_packed_tx():
+    form = json.loads(request.json)
+    tx_ids_str = form.get("tx_ids")
+    tx_ids = eval(tx_ids_str)
+    public_tx_pool.drop_some_txs(tx_ids)
+    return 'success dropped {} txs'.format(len(tx_ids)), 201
 
 
 # ############################################### api for human

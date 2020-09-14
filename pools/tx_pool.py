@@ -25,6 +25,13 @@ class TxPool:
     def txs_num(self):
         return len(self.txs)
 
+    @property
+    def txs_list(self):
+        tl = []
+        for k, v in self.txs.items():
+            tl.append(dict({k: v}))
+        return tl
+
     def add_tx(self, member_proof, new_tx: Dict):
         """
         type can be:
@@ -129,10 +136,31 @@ class TxPool:
         """
         return self.txs.pop(valid_proof)
 
-    def drop_a_tx(self, invalid_proof):
+    def drop_a_tx(self, tx_id):
         """
         DROP OUT a transaction from the tx pool
         :return:
         """
-        self.txs.pop(invalid_proof)
+        for k, v in self.txs.items():
+            if v.get('transaction_id') == tx_id:
+                self.txs.pop(k)
+            break
 
+    def return_txs(self, return_num=0) -> list:
+        """
+        return txs to client to pack into block chain
+        if return_num == -1 return all txs
+        :return:
+        """
+        tx_to_return = []
+        if return_num == 0:
+            for i in range(0, self.txs_num):
+                tx_to_return.append(self.txs_list[i])
+        else:
+            for i in range(0, return_num):
+                tx_to_return.append(self.txs_list[i])
+        return tx_to_return
+
+    def drop_some_txs(self, tx_ids: list):
+        for tx_id in tx_ids:
+            self.drop_a_tx(tx_id)

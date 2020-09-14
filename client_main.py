@@ -18,17 +18,20 @@ def start_some_clients(n):
     client2.register_node(client2.ip, client2.ring_sig_public_key, client2.rsa_public_key_tuple)
     client3.register_node(client3.ip, client3.ring_sig_public_key, client3.rsa_public_key_tuple)
 
-    secret = b64.b64encode(b'weather changes for nothing!')
-    pieces = client1.split_secret(secret, 2, 3)
-    pieces_encoded = [b64.b64encode(piece.encode()) for piece in pieces]
+    # secret = b64.b64encode(b'weather changes for nothing!')
+    # pieces = client1.split_secret(secret, 2, 3)
+    # pieces_encoded = [b64.b64encode(piece.encode()) for piece in pieces]
     # rsa_pks = client1.get_rsa_pks_from_pool()
     # wrapped_secret = client1.encrypt_secrets(rsa_pks, pieces_encoded, True)
 
     # others, wanted = client3.get_a_secret_from_wrapped(wrapped_secret, client1.rsa_private_key_origin)
 
-    client3.new_transaction(transaction_type="txdata", content='str(wrapped_secret)')
-    client2.new_transaction(transaction_type="txdata", content='str(wrapped_secret)')
-    client1.new_transaction(transaction_type="txdata", content='str(wrapped_secret)')
+    client3.new_transaction(transaction_type="txdata", content='wrapped_secret')
+    client2.new_transaction(transaction_type="txdata", content='wrapped_secret')
+    client1.new_transaction(transaction_type="txdata", content='wrapped_secret')
+
+    client3.get_transactions_to_pack()
+    print(client3.mine())
 
 
 @app.route('/view/transactions', methods=['GET'])
@@ -60,9 +63,9 @@ def view_rsa_pk_pool():
 
 if __name__ == '__main__':
     start_some_clients(5)
-    from argparse import ArgumentParser
-    parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5001, type=int, help='port to listen on')
-    args = parser.parse_args()
-    port = args.port
-    app.run(host=POOL_URL, port=port)
+    # from argparse import ArgumentParser
+    # parser = ArgumentParser()
+    # parser.add_argument('-p', '--port', default=5001, type=int, help='port to listen on')
+    # args = parser.parse_args()
+    # port = args.port
+    # app.run(host=POOL_URL, port=port)

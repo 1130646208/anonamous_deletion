@@ -97,3 +97,16 @@ def strip_secret(wrapped_decrypted: bytes) -> tuple:
             other_secrets = wrapped_decrypted[:secret_r_bound_index]
             wanted_secret = wrapped_decrypted[secret_r_bound_index:]
             return other_secrets, wanted_secret
+
+
+def get_transactions_ids(transactions: list):
+    # transactions looks like
+    # [{'a': {"id": 1, "type": "1234"}},
+    #   {'b': {"id": 2, "type": "12345"}}, {'c': {"id": 3, "type": "12346"}}]
+    transactions_ids = []
+    for transaction in transactions:
+        t = list(transaction.values())[0]
+        t_id = t.get("transaction_id")
+        transactions_ids.append(t_id)
+
+    return transactions_ids

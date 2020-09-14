@@ -7,7 +7,7 @@ from rsa.key import PrivateKey
 from crypto_rsa.crypto_rsa import RSAHandler
 from ring_signature.ring_signature_handler import RingSigHandler
 from secret_sharing import Base64ToHexSecretSharer
-from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, reconstruct_rsa_pk, strip_secret
+from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, reconstruct_rsa_pk, strip_secret, get_transactions_ids
 from pools import POOL_URL, POOL_PORT
 from .block_chain import BlockChain
 
@@ -181,3 +181,40 @@ class Client:
         except:
             # 解密失败说明不是给自己的，直接return None
             return None, None
+
+    def get_transactions_to_pack(self, num_to_get=0):
+        r = requests.get("http://" + POOL_URL + ":" + POOL_PORT + "/transactions/get")
+        if not r.status_code == 201:
+            print("Message from client.get_transactions_to_pack: unable to get transactions from pool.")
+
+        else:
+            j = r.text
+            self.chain.transactions.extend(eval(j))
+
+    def mine(self):
+        packed_transactions_ids = get_transactions_ids(self.chain.transactions)
+        proof = self.chain.proof_of_work()
+        last_block = self.chain.last_block
+        previous_hash = self.chain.hash_block(last_block)
+        block = self.chain.create_block(proof, previous_hash=previous_hash)
+        # tell pool to drop txs
+        form = json.dumps({
+            "tx_ids": str(packed_transactions_ids)
+        })
+
+        is_drop_success = False
+        r = requests.post("http://" + POOL_URL + ":" + POOL_PORT + "/transactions/drop", json=form)
+        if r.status_code == 201:
+            is_drop_success = True
+
+        mine_message = {
+            'message': "New Block Forged",
+            'block_number': block['block_number'],
+            'transactions': block['transactions'],
+            'nonce': block['nonce'],
+            'previous_hash': block['previous_hash'],
+            'packed_transactions_ids': str(packed_transactions_ids),
+            'pool_drop_txs': str(is_drop_success)
+        }
+        return mine_message
+

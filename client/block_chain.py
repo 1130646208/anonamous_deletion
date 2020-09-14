@@ -1,4 +1,4 @@
-from collections import OrderedDict
+import json
 import hashlib
 import time
 from urllib.parse import urlparse
@@ -7,7 +7,6 @@ import requests
 
 
 from helpers import get_block_hash
-from pools import public_tx_pool
 
 
 MINING_DIFFICULTY = 2
@@ -24,7 +23,11 @@ class BlockChain:
         # Generate random number to be used as node_id
         self.node_id = str(uuid4()).replace('-', '')
         # Create genesis block
-        self.create_block(0, '00')
+        self.create_block(1, 'This is genesis block.')
+
+    @property
+    def last_block(self):
+        return self.chain[-1]
 
     def register_node(self, node_url):
         """
@@ -42,11 +45,11 @@ class BlockChain:
 
     def create_block(self, nonce, previous_hash):
         """
-        Add a block of transactions to the blockchain
+        Add a block of transactions to the block chain
         """
         block = {
             'block_number': len(self.chain) + 1,
-            'timestamp': time.time_ns(),
+            'timestamp': time.time(),
             'transactions': self.transactions,
             'nonce': nonce,
             'previous_hash': previous_hash
@@ -130,3 +133,14 @@ class BlockChain:
             return True
 
         return False
+
+    @staticmethod
+    def hash_block(block):
+        """
+        Create a SHA-256 hash of a block
+        """
+        # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
+        block_string = json.dumps(block, sort_keys=True).encode()
+
+        return hashlib.sha256(block_string).hexdigest()
+
