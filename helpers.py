@@ -112,7 +112,8 @@ def get_transactions_ids(transactions: list):
 
 
 def tx_list_to_ordered(transactions: list) -> list:
-    transaction_elements = ['sender_address', 'recipient_address', 'value']
-    transactions_ordered = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in
+    transaction_elements = ['content', 'membership_proof', 'timestamp', 'timestamp', 'transaction_id',
+                            'transaction_type']
+    ordered_transactions = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in
                             transactions]
-    return transactions_ordered
+    return ordered_transactions

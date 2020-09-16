@@ -21,11 +21,11 @@ def start_some_clients(n):
 
     # others, wanted = client3.get_a_secret_from_wrapped(wrapped_secret, client1.rsa_private_key_origin)
 
-    # client2.new_transaction(transaction_type="txdata", content='wrapped_secret')
+    client2.new_transaction(transaction_type="txdata", content='wrapped_secret')
 
     client2.get_transactions_to_pack()
+    print(client2.mine())
     client2.block_chain.resolve_conflicts()
-    # print(client2.mine())
 
 
 @app.route('/chain', methods=['GET'])
@@ -77,4 +77,3 @@ if __name__ == '__main__':
     t = Thread(target=start_server)
     t.start()
     start_some_clients(5)
-

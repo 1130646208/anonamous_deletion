@@ -1,12 +1,11 @@
 import json
-import hashlib
 import time
-from collections import OrderedDict
-from urllib.parse import urlparse
-from uuid import uuid4
+import hashlib
 import requests
+from uuid import uuid4
+from urllib.parse import urlparse
 
-from helpers import get_block_hash
+from helpers import get_block_hash, tx_list_to_ordered
 from pools import POOL_PORT, POOL_URL
 
 MINING_DIFFICULTY = 2
@@ -75,10 +74,7 @@ class BlockChain:
         last_block = self.chain[-1]
         last_hash = get_block_hash(last_block)
         nonce = 0
-        transaction_elements = ['content', 'membership_proof', 'timestamp', 'timestamp', 'transaction_id',
-                                'transaction_type']
-        ordered_transactions = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in
-                                self.transactions]
+        ordered_transactions = tx_list_to_ordered(self.transactions)
         while self.valid_proof(ordered_transactions, last_hash, nonce) is False:
             nonce += 1
 
@@ -107,10 +103,7 @@ class BlockChain:
             if block['previous_hash'] != get_block_hash(last_block):
                 return False
             transactions = block['transactions']
-            transaction_elements = ['content', 'membership_proof', 'timestamp', 'timestamp', 'transaction_id',
-                                    'transaction_type']
-            ordered_transactions = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in
-                                    transactions]
+            ordered_transactions = tx_list_to_ordered(transactions)
             if not self.valid_proof(ordered_transactions, block['previous_hash'], block['nonce'], MINING_DIFFICULTY):
                 return False
 
@@ -132,7 +125,11 @@ class BlockChain:
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
             print('[neighbor] http://' + node + '/chain')
-            response = requests.get('http://' + node + '/chain')
+            try:
+                response = requests.get('http://' + node + '/chain')
+            except Exception:
+                print('Unable to connect [neighbor] http://{}/chain. Ignored.'.format(node))
+                continue
 
             if response.status_code == 200:
                 length = response.json()['length']
