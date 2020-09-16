@@ -1,13 +1,13 @@
 import json
 import hashlib
 import time
+from collections import OrderedDict
 from urllib.parse import urlparse
 from uuid import uuid4
 import requests
 
-
 from helpers import get_block_hash
-
+from pools import POOL_PORT, POOL_URL
 
 MINING_DIFFICULTY = 2
 
@@ -18,7 +18,6 @@ class BlockChain:
 
         self.transactions = []
         self.chain = []
-        self.nodes = set()
         self.pool = []
         # Generate random number to be used as node_id
         self.node_id = str(uuid4()).replace('-', '')
@@ -28,6 +27,15 @@ class BlockChain:
     @property
     def last_block(self):
         return self.chain[-1]
+
+    @property
+    def nodes(self):
+        r = requests.get("http://" + POOL_URL + ":" + POOL_PORT + "/nodes/ip")
+        if r.status_code == 201:
+            nodes_ip = r.text.split(';')[:-1]
+            return nodes_ip
+        else:
+            return []
 
     def register_node(self, node_url):
         """
@@ -49,7 +57,7 @@ class BlockChain:
         """
         block = {
             'block_number': len(self.chain) + 1,
-            'timestamp': time.time(),
+            'timestamp': time.time_ns(),
             'transactions': self.transactions,
             'nonce': nonce,
             'previous_hash': previous_hash
@@ -67,7 +75,11 @@ class BlockChain:
         last_block = self.chain[-1]
         last_hash = get_block_hash(last_block)
         nonce = 0
-        while self.valid_proof(self.transactions, last_hash, nonce) is False:
+        transaction_elements = ['content', 'membership_proof', 'timestamp', 'timestamp', 'transaction_id',
+                                'transaction_type']
+        ordered_transactions = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in
+                                self.transactions]
+        while self.valid_proof(ordered_transactions, last_hash, nonce) is False:
             nonce += 1
 
         return nonce
@@ -95,7 +107,11 @@ class BlockChain:
             if block['previous_hash'] != get_block_hash(last_block):
                 return False
             transactions = block['transactions']
-            if not self.valid_proof(transactions, block['previous_hash'], block['nonce'], MINING_DIFFICULTY):
+            transaction_elements = ['content', 'membership_proof', 'timestamp', 'timestamp', 'transaction_id',
+                                    'transaction_type']
+            ordered_transactions = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in
+                                    transactions]
+            if not self.valid_proof(ordered_transactions, block['previous_hash'], block['nonce'], MINING_DIFFICULTY):
                 return False
 
             last_block = block
@@ -115,7 +131,7 @@ class BlockChain:
 
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
-            print('http://' + node + '/chain')
+            print('[neighbor] http://' + node + '/chain')
             response = requests.get('http://' + node + '/chain')
 
             if response.status_code == 200:
@@ -143,4 +159,3 @@ class BlockChain:
         block_string = json.dumps(block, sort_keys=True).encode()
 
         return hashlib.sha256(block_string).hexdigest()
-

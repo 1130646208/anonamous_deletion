@@ -1,5 +1,6 @@
 import hashlib
 import json
+from collections import OrderedDict
 
 from py_ecc.fields import bn128_FQ
 from py_ecc.fields.field_properties import field_properties
@@ -101,12 +102,17 @@ def strip_secret(wrapped_decrypted: bytes) -> tuple:
 
 def get_transactions_ids(transactions: list):
     # transactions looks like
-    # [{'a': {"id": 1, "type": "1234"}},
-    #   {'b': {"id": 2, "type": "12345"}}, {'c': {"id": 3, "type": "12346"}}]
+    # [{"id": 1, "type": "1234"}, {"id": 2, "type": "12345"}, {"id": 3, "type": "12346"}]
     transactions_ids = []
     for transaction in transactions:
-        t = list(transaction.values())[0]
-        t_id = t.get("transaction_id")
-        transactions_ids.append(t_id)
+        transaction_id = transaction.get("transaction_id")
+        transactions_ids.append(transaction_id)
 
     return transactions_ids
+
+
+def tx_list_to_ordered(transactions: list) -> list:
+    transaction_elements = ['sender_address', 'recipient_address', 'value']
+    transactions_ordered = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in
+                            transactions]
+    return transactions_ordered

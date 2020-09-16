@@ -7,7 +7,8 @@ from rsa.key import PrivateKey
 from crypto_rsa.crypto_rsa import RSAHandler
 from ring_signature.ring_signature_handler import RingSigHandler
 from secret_sharing import Base64ToHexSecretSharer
-from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, reconstruct_rsa_pk, strip_secret, get_transactions_ids
+from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, reconstruct_rsa_pk, strip_secret, \
+    get_transactions_ids, tx_list_to_ordered
 from pools import POOL_URL, POOL_PORT
 from .block_chain import BlockChain
 
@@ -15,7 +16,7 @@ from .block_chain import BlockChain
 class Client:
 
     def __init__(self, ip=None):
-        self.chain = BlockChain()
+        self.block_chain = BlockChain()
         self.__ring_sig_handler = RingSigHandler()
         self.rsa_handler = RSAHandler()
         self.b2hss = Base64ToHexSecretSharer()
@@ -188,16 +189,18 @@ class Client:
             print("Message from client.get_transactions_to_pack: unable to get transactions from pool.")
 
         else:
-            j = r.text
-            self.chain.transactions.extend(eval(j))
+            txs_list_str = r.text
+            # 从交易池获得来的交易排序一下
+            txs_list = sorted(eval(txs_list_str), key=lambda x: x["transaction_id"])
+            self.block_chain.transactions.extend(txs_list)
 
     def mine(self):
-        packed_transactions_ids = get_transactions_ids(self.chain.transactions)
-        proof = self.chain.proof_of_work()
-        last_block = self.chain.last_block
-        previous_hash = self.chain.hash_block(last_block)
-        block = self.chain.create_block(proof, previous_hash=previous_hash)
-        # tell pool to drop txs
+        packed_transactions_ids = get_transactions_ids(self.block_chain.transactions)
+
+        proof = self.block_chain.proof_of_work()
+        previous_hash = self.block_chain.hash_block(self.block_chain.last_block)
+        new_block = self.block_chain.create_block(proof, previous_hash=previous_hash)
+        # tell pool to drop txs_in
         form = json.dumps({
             "tx_ids": str(packed_transactions_ids)
         })
@@ -209,10 +212,10 @@ class Client:
 
         mine_message = {
             'message': "New Block Forged",
-            'block_number': block['block_number'],
-            'transactions': block['transactions'],
-            'nonce': block['nonce'],
-            'previous_hash': block['previous_hash'],
+            'block_number': new_block['block_number'],
+            'transactions': new_block['transactions'],
+            'nonce': new_block['nonce'],
+            'previous_hash': new_block['previous_hash'],
             'packed_transactions_ids': str(packed_transactions_ids),
             'pool_drop_txs': str(is_drop_success)
         }

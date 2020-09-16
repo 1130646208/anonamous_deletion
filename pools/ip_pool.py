@@ -6,13 +6,19 @@ class IPPool:
 
     def __init__(self):
         self.ips = set()
-        self.ip_num = len(self.ips)
         self.max_ip_num_limit = MAX_IP_NUM_LIMIT
         # todo: check ip
         self._ip_rule = None
 
-    def get_available_ips(self):
-        return self.ips
+    def get_all_ips(self):
+        ips_in_str = ''
+        for ip in self.ips:
+            ips_in_str += str(ip) + ';'
+        return ips_in_str
+
+    @property
+    def ip_num(self):
+        return len(self.ips)
 
     def add_ip(self, ip: str):
         parsed_url = urlparse(ip)

@@ -28,7 +28,7 @@ def register_nodes():
     if rsa_pk is None:
         return "Error: Please supply a valid rsa_pk.", 400
 
-    public_ip_pool.add_ip(ip)
+    public_ip_pool.submit_ip(ip)
     # because 'str_vector_to_tuple' returns list, it is necessary to write [0]
     public_ring_sig_pk_pool.add_pk(str_vector_to_tuple(ring_sig_pk)[0])
     public_rsa_pk_pool.add_pk(str_vector_to_tuple(rsa_pk)[0])
@@ -67,13 +67,17 @@ def new_transaction():
 # api
 @app.route('/transactions/all', methods=['GET'])
 def get_all_transactions():
-    response = public_tx_pool.txs
+    response = {
+        "txs_in": str(public_tx_pool.txs_in),
+        "txs_out": str(public_tx_pool.txs_out)
+    }
     return jsonify(response), 201
 
 
 # api
 @app.route('/transactions/get', methods=['GET'])
 def get_transactions_to_pack():
+    # public_tx_pool.return_txs() returns transactions' list
     response = public_tx_pool.return_txs()
     return str(response), 201
 
@@ -95,19 +99,28 @@ def get_ring_sig_pk_pool_in_str():
 
 
 # api
+@app.route('/nodes/ip', methods=['GET'])
+def get_ip_pool_in_str():
+    # 'get_all_ips' returns str like 127.0.0.1:5000;
+    result = ''
+    result = public_ip_pool.get_all_ips()
+    return result, 201
+
+
+# api
 @app.route('/nodes/rsa_pub_key', methods=['GET'])
 def get_rsa_pk_pool_in_str():
     # 'get_all_pks' returns str
     return public_rsa_pk_pool.get_all_pks(), 201
 
-# /transactions/drop can be visited by everyone, pay attention to security
+# '/transactions/drop' can be visited by everyone, pay attention to security
 @app.route('/transactions/drop', methods=['POST'])
 def drop_packed_tx():
     form = json.loads(request.json)
     tx_ids_str = form.get("tx_ids")
     tx_ids = eval(tx_ids_str)
     public_tx_pool.drop_some_txs(tx_ids)
-    return 'success dropped {} txs'.format(len(tx_ids)), 201
+    return 'success dropped {} txs_in'.format(len(tx_ids)), 201
 
 
 # ############################################### api for human
@@ -133,8 +146,8 @@ def view_rsa_pk_pool():
 # api
 @app.route('/view/transactions', methods=['GET'])
 def view_all_transactions():
-    response = {"total": public_tx_pool.txs_num,
-                "transactions": public_tx_pool.txs
+    response = {"total": public_tx_pool.txs_in_num,
+                "transactions": str(public_tx_pool.txs)
                 }
     return jsonify(response), 201
 

@@ -1,4 +1,4 @@
-from pools.tx_pool import TxPool
+from pools.origin_tx_pool import TxPool
 from collections import OrderedDict
 import hashlib
 import time
@@ -27,7 +27,7 @@ pool.add_tx('proof3', OrderedDict({'transaction_id': hashlib.md5(str(time3).enco
                                    'timestamp': str(time3),
                                    }))
 
-print(pool.txs)
+print(pool.txs_in)
 print(pool.sorted_txs)
 
 pool.drop_a_tx('proof1')
