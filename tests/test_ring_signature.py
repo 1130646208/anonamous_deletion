@@ -28,8 +28,8 @@ print(sig3)
 
 # 不同的人可以验证某一个人的签名
 rh3.verify_ring_signature(sig, 123)
-rh2.verify_ring_signature(sig, 123)
-rh1.verify_ring_signature(sig, 123)
+rh2.verify_ring_signature(sig2, 123)
+rh1.verify_ring_signature(sig3, 123)
 
 
 rh3.verify_ring_signature(sig3, 123)

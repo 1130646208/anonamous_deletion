@@ -1,6 +1,5 @@
 from threading import Thread
 from client.client import Client
-import base64 as b64
 from flask import Flask, jsonify
 import requests
 from pools import POOL_PORT, POOL_URL

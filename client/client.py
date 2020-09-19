@@ -191,8 +191,10 @@ class Client:
         else:
             txs_list_str = r.text
             # 从交易池获得来的交易排序一下
+            # todo: delete 'sorted'
             txs_list = sorted(eval(txs_list_str), key=lambda x: x["transaction_id"])
             self.block_chain.transactions.extend(txs_list)
+            print("Got transactions: {} to be mine...".format(str(txs_list)))
 
     def mine(self):
         packed_transactions_ids = get_transactions_ids(self.block_chain.transactions)

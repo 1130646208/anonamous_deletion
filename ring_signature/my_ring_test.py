@@ -14,8 +14,10 @@ from ring_signature.pysolcrypto.aosring import aosring_randkeys, aosring_check, 
 def test_aos():
     msg = randsn()
     keys = aosring_randkeys(4)
-    print(keys)
+    pk, sk = keys
+    print("pk {}, sk {}".format(pk, sk))
     sig = aosring_sign(*keys, message=msg)
+    print("sig", sig)
     assert(aosring_check(*sig, message=msg))
 
 
