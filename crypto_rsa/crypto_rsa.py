@@ -29,7 +29,8 @@ class RSAHandler:
     @staticmethod
     def rsa_enc_long_bytes(bytes_str, pub_key):
         if not isinstance(bytes_str, bytes):
-            return None
+            raise ValueError("Data to be encrypted should be bytes type.")
+
             # 导入rsa库
         import rsa.common
         key_length = rsa.common.byte_size(pub_key['n'])

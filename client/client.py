@@ -15,7 +15,7 @@ from .block_chain import BlockChain
 
 class Client:
 
-    def __init__(self, ip=None):
+    def __init__(self, ip: str = None):
         self.block_chain = BlockChain()
         self.__ring_sig_handler = RingSigHandler()
         self.rsa_handler = RSAHandler()
@@ -125,6 +125,7 @@ class Client:
 
     def recover_secret(self, shares: list) -> bytes:
         """
+        recovery a secret from shamir pieces
         :param shares:
         :return: base64 format
         """
@@ -132,6 +133,44 @@ class Client:
         secret_string = self.b2hss.recover_secret(shares)
         secret_b64 = bytes(secret_string.encode()) + b"===="
         return secret_b64
+
+    def get_obliged_secrets(self):
+        """
+        find secrets that are supposed to be stored by me.
+        :return:
+        """
+        # 记录完成交易的ID
+        succeed_tx_ids = []
+        decrypted_secret = None
+        for block in self.block_chain.chain:
+            transactions = block.get("transactions")
+            if transactions:
+                for transaction in transactions:
+                    encrypted_secret = transaction.get("content")
+                    tx_id = transaction.get("transaction_id")
+                    if encrypted_secret and tx_id:
+                        try:
+                            decrypted_secret = self.rsa_handler.rsa_dec_long_bytes(eval(encrypted_secret),
+                                                                                   self.rsa_private_key_origin)
+                            succeed_tx_ids.append(tx_id)
+                            print("Got secret {} from tx {}.".format(decrypted_secret, tx_id))
+                        except Exception:
+                            print("Not the secret, continue...")
+                            pass
+            else:
+                print("No tx in block {}.".format(block.get("block_number")))
+
+    def encrypt_secrets_parallel(self, pks, secrets_to_be_encrypted):
+        """
+        encrypt a secret with a rsa pk
+        :return:
+        """
+        assert (len(secrets_to_be_encrypted) == len(pks))
+        enc_secrets = []
+        for i in range(len(pks)):
+            enc_secrets.append(self.rsa_handler.rsa_enc_long_bytes(secrets_to_be_encrypted[i], pks[i]))
+
+        return enc_secrets
 
     def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
         """
@@ -222,4 +261,3 @@ class Client:
             'pool_drop_txs': str(is_drop_success)
         }
         return mine_message
-

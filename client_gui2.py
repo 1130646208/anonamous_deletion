@@ -9,7 +9,7 @@ import base64 as b64
 from pools import POOL_PORT, POOL_URL
 
 CLIENT_URL = '127.0.0.1'
-CLIENT_PORT = '5001'
+CLIENT_PORT = '5002'
 
 app = Flask(__name__)
 client = Client('http://' + CLIENT_URL + ':' + CLIENT_PORT)

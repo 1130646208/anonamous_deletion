@@ -113,6 +113,7 @@ def get_rsa_pk_pool_in_str():
     # 'get_all_pks' returns str
     return public_rsa_pk_pool.get_all_pks(), 201
 
+
 # '/transactions/drop' can be visited by everyone, pay attention to security
 @app.route('/transactions/drop', methods=['POST'])
 def drop_packed_tx():
@@ -143,12 +144,15 @@ def view_rsa_pk_pool():
                 }
     return jsonify(response), 201
 
+
 # api
 @app.route('/view/transactions', methods=['GET'])
 def view_all_transactions():
-    response = {"total": public_tx_pool.txs_in_num,
-                "transactions": str(public_tx_pool.txs)
-                }
+    response = {
+        "total": public_tx_pool.txs_in_num + public_tx_pool.txs_out_num,
+        "txs_in": str(public_tx_pool.txs_in),
+        "txs_out": str(public_tx_pool.txs_out)
+    }
     return jsonify(response), 201
 
 

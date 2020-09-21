@@ -146,25 +146,18 @@ class TxPool:
         for tx in self.txs_out:
             if tx.get('transaction_id') == tx_id:
                 self.txs_out.pop(self.txs_out.index(tx))
-            break
+                break
 
-    def return_txs(self, return_num=0) -> list:
+    def return_txs(self) -> list:
         """
         return txs_in to client to pack into block chain
-        if return_num == 0 return all txs_in
         :return:
         """
         # transfer txs before return tx
         self.transfer_txs()
 
         tx_to_return = []
-        if return_num == 0:
-            # todo: txs_num
-            for i in range(0, self.txs_out_num):
-                tx_to_return.append(self.txs_out[i])
-        else:
-            for i in range(0, return_num):
-                tx_to_return.append(self.txs_out[i])
+        tx_to_return.extend(self.txs_out)
         return tx_to_return
 
     def drop_some_txs(self, tx_ids: list):
@@ -172,7 +165,7 @@ class TxPool:
             self.drop_a_tx(tx_id)
 
         # transfer txs after drop packed txs
-        self.transfer_txs()
+        # self.transfer_txs()
 
     def transfer_txs(self):
         """
