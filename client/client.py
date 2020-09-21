@@ -11,12 +11,15 @@ from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, r
     get_transactions_ids, tx_list_to_ordered
 from pools import POOL_URL, POOL_PORT
 from .block_chain import BlockChain
+from .tx_done_chain import TxDoneChain
 
 
 class Client:
 
     def __init__(self, ip: str = None):
         self.block_chain = BlockChain()
+        self.txs_done = set()
+
         self.__ring_sig_handler = RingSigHandler()
         self.rsa_handler = RSAHandler()
         self.b2hss = Base64ToHexSecretSharer()
@@ -139,6 +142,10 @@ class Client:
         find secrets that are supposed to be stored by me.
         :return:
         """
+        txs_done = []
+        r1 = requests.get("http://" + POOL_URL + ":" + POOL_PORT + "/transactions/done")
+        if r1.text:
+            txs_done.extend(eval(r1.text))
         # 记录完成交易的ID
         succeed_tx_ids = []
         decrypted_secret = None
@@ -148,7 +155,7 @@ class Client:
                 for transaction in transactions:
                     encrypted_secret = transaction.get("content")
                     tx_id = transaction.get("transaction_id")
-                    if encrypted_secret and tx_id:
+                    if encrypted_secret and tx_id and tx_id not in txs_done:
                         try:
                             decrypted_secret = self.rsa_handler.rsa_dec_long_bytes(eval(encrypted_secret),
                                                                                    self.rsa_private_key_origin)
@@ -159,6 +166,13 @@ class Client:
                             pass
             else:
                 print("No tx in block {}.".format(block.get("block_number")))
+        if succeed_tx_ids:
+            data = json.dumps({
+                "txs_done": str(succeed_tx_ids)
+            })
+            r2 = requests.post("http://" + POOL_URL + ":" + POOL_PORT + "/transactions/submit_done", json=data)
+            if not r2.status_code == 201:
+                raise ValueError("Submit txs done error.")
 
     def encrypt_secrets_parallel(self, pks, secrets_to_be_encrypted):
         """

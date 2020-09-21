@@ -2,7 +2,8 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 import json
 
-from pools import public_ip_pool, public_tx_pool, public_ring_sig_pk_pool, public_rsa_pk_pool, POOL_URL, POOL_PORT
+from pools import public_ip_pool, public_tx_pool, public_ring_sig_pk_pool, \
+     public_rsa_pk_pool, public_tx_done_pool, POOL_URL, POOL_PORT
 from helpers import str_vector_to_tuple
 
 app = Flask(__name__)
@@ -63,6 +64,24 @@ def new_transaction():
         response = {"message": "Invalid Transaction!"}
         return jsonify(response), 406
 
+
+@app.route('/transactions/submit_done', methods=['POST'])
+def submit_done_txs():
+    values = request.json
+    if values:
+        data_dict = json.loads(values)
+        txs_done = eval(data_dict.get("txs_done"))
+        public_tx_done_pool.add_tx(txs_done)
+        response = {"message": "{} TxDone added: {}.".format(len(txs_done), str(txs_done))}
+        return jsonify(response), 201
+    else:
+        response = {"message": "Empty TxDone message."}
+        return jsonify(response), 406
+
+
+@app.route('/transactions/done', methods=['GET'])
+def get_done_txs():
+    return str(public_tx_done_pool.get_all_txs_done()), 201
 
 # api
 @app.route('/transactions/all', methods=['GET'])
