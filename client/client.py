@@ -2,7 +2,10 @@ from hashlib import md5
 import json
 import requests
 import base64 as b64
+
+from rsa import DecryptionError
 from rsa.key import PrivateKey
+from client.database_connector import DBConnector
 
 from crypto_rsa.crypto_rsa import RSAHandler
 from ring_signature.ring_signature_handler import RingSigHandler
@@ -19,6 +22,9 @@ class Client:
     def __init__(self, ip: str = None):
         self.block_chain = BlockChain()
         self.txs_done = set()
+        self.data_base = DBConnector('127_0_0_1', ip.split(":")[2])
+        # {rsa_pk: secret_md5(str)}
+        self.rsa_pk_and_secret_piece_mapping = dict()
 
         self.__ring_sig_handler = RingSigHandler()
         self.rsa_handler = RSAHandler()
@@ -155,15 +161,19 @@ class Client:
                 for transaction in transactions:
                     encrypted_secret = transaction.get("content")
                     tx_id = transaction.get("transaction_id")
-                    if encrypted_secret and tx_id and tx_id not in txs_done:
+                    if encrypted_secret and tx_id and (tx_id not in txs_done):
                         try:
                             decrypted_secret = self.rsa_handler.rsa_dec_long_bytes(eval(encrypted_secret),
                                                                                    self.rsa_private_key_origin)
                             succeed_tx_ids.append(tx_id)
-                            print("Got secret {} from tx {}.".format(decrypted_secret, tx_id))
-                        except Exception:
+                            print("Got secret {} from tx {} in block {}.".
+                                  format(decrypted_secret, tx_id, block.get("block_number")))
+                        except DecryptionError:
                             print("Not the secret, continue...")
-                            pass
+                            decrypted_secret = None
+                        if decrypted_secret:
+                            self.operate_secrets(decrypted_secret, transaction.get("transaction_type"))
+                            decrypted_secret = None
             else:
                 print("No tx in block {}.".format(block.get("block_number")))
         if succeed_tx_ids:
@@ -174,21 +184,33 @@ class Client:
             if not r2.status_code == 201:
                 raise ValueError("Submit txs done error.")
 
+    def operate_secrets(self, secret_or_digest, transaction_type: str):
+        """
+        after get the secret from block chain, do operations to secrets according to the transaction_type
+        :return:
+        """
+        if transaction_type == 'txdata':
+            self.data_base.save_secret(str(secret_or_digest), 0)
+
+        elif transaction_type == 'txdelete':
+            self.data_base.delete_secret(secret_or_digest.decode())
+
     def encrypt_secrets_parallel(self, pks, secrets_to_be_encrypted):
         """
-        encrypt a secret with a rsa pk
+        encrypt secrets with rsa pks, one pk encrypts one secret
         :return:
         """
         assert (len(secrets_to_be_encrypted) == len(pks))
         enc_secrets = []
         for i in range(len(pks)):
+            self.rsa_pk_and_secret_piece_mapping[pks[i]] = md5(str(secrets_to_be_encrypted[i]).encode()).hexdigest()
             enc_secrets.append(self.rsa_handler.rsa_enc_long_bytes(secrets_to_be_encrypted[i], pks[i]))
 
         return enc_secrets
 
-    def encrypt_secrets(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
+    def encrypt_secrets_serially(self, pks: list, secrets_to_be_encrypted: list, is_secrets_encoded_b64: bool) -> bytes:
         """
-        encrypt some secrets layer by layer. ATTENTION!! secret  can not be empty.
+        encrypt some secrets layer by layer. ATTENTION!! secret can not be empty.
         :param is_secrets_encoded_b64:
         :param pks:
         :param secrets_to_be_encrypted:
@@ -237,6 +259,7 @@ class Client:
             return None, None
 
     def get_transactions_to_pack(self, num_to_get=0):
+        # todo: when packed txs are mined by other node, cancel mine these txs
         r = requests.get("http://" + POOL_URL + ":" + POOL_PORT + "/transactions/get")
         if not r.status_code == 201:
             print("Message from client.get_transactions_to_pack: unable to get transactions from pool.")

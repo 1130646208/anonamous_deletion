@@ -96,6 +96,8 @@ class ClientGui:
                   command=self.send_sec_txs).grid(row=3, column=1, padx=8, pady=8)
         tk.Button(self.btn_frame, text='获取给我的秘密', fg='black',
                   command=self.get_ob_sec).grid(row=3, column=2, padx=8, pady=8)
+        tk.Button(self.btn_frame, text=' 撤销我的秘密 ', fg='black',
+                  command=self.send_revoke_txs).grid(row=3, column=3, padx=8, pady=8)
 
         self.root.mainloop()
 
@@ -168,6 +170,13 @@ class ClientGui:
         for item in result_str:
             self.new_tx(transaction_type='txdata', content=item)
             print('Sent secret {} to a tx'.format(item))
+
+    def send_revoke_txs(self):
+        for pk, secret_md5 in client.rsa_pk_and_secret_piece_mapping.items():
+            content_bytes = client.rsa_handler.rsa_enc_long_bytes(secret_md5.encode(), pk)
+            self.new_tx(transaction_type='txdelete', content=str(content_bytes))
+            print('Sent revoke requests for secret_md5: {}'.format(secret_md5))
+        client.rsa_pk_and_secret_piece_mapping.clear()
 
     def get_ob_sec(self):
         client.get_obliged_secrets()
