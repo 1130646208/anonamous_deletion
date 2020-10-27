@@ -207,9 +207,9 @@ class Client:
             self.new_transaction('txdata', str(enc_secret_content))
 
     def recover_secret_tx(self):
-        temp = (self.rsa_public_key_origin['n'], self.rsa_public_key_origin['e'])
+        my_rsa_pk = (self.rsa_public_key_origin['n'], self.rsa_public_key_origin['e'])
         for pk, secret_md5 in self.rsa_pk_and_secret_piece_mapping.items():
-            content_bytes = self.rsa_handler.rsa_enc_long_bytes((secret_md5 + '||' + str(temp)).encode(), pk)
+            content_bytes = self.rsa_handler.rsa_enc_long_bytes((secret_md5 + '||' + str(my_rsa_pk)).encode(), pk)
             self.new_transaction(transaction_type='txrecover', content=str(content_bytes))
             print('Sent recover requests for secret_md5: {}'.format(secret_md5))
 
@@ -221,6 +221,7 @@ class Client:
         assert (len(secrets_to_be_encrypted) == len(pks))
         enc_secrets = []
         for i in range(len(pks)):
+            # TODO: current bug: secrets to one people will be overwrite
             self.rsa_pk_and_secret_piece_mapping[pks[i]] = md5(str(secrets_to_be_encrypted[i]).encode()).hexdigest()
             enc_secrets.append(self.rsa_handler.rsa_enc_long_bytes(secrets_to_be_encrypted[i], pks[i]))
 

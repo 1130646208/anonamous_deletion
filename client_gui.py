@@ -31,7 +31,7 @@ class ClientGui:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry('800x800+500+200')
+        self.root.geometry('400x400+200+200')
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
         # self.root.rowconfigure(2, weight=1)
