@@ -182,4 +182,4 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', default=POOL_PORT, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
-    app.run(host=POOL_URL, port=port)
+    app.run(threaded=True, host=POOL_URL, port=port)

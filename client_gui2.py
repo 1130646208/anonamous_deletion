@@ -99,6 +99,9 @@ class ClientGui:
         tk.Button(self.btn_frame, text=' 撤销我的秘密 ', fg='black',
                   command=self.send_revoke_txs).grid(row=3, column=3, padx=8, pady=8)
 
+        tk.Button(self.btn_frame, text=' 恢复我的秘密 ', fg='black',
+                  command=self.send_recover_txs).grid(row=2, column=3, padx=8, pady=8)
+
         self.root.mainloop()
 
     def full_chain(self):
@@ -177,6 +180,9 @@ class ClientGui:
             self.new_tx(transaction_type='txdelete', content=str(content_bytes))
             print('Sent revoke requests for secret_md5: {}'.format(secret_md5))
         client.rsa_pk_and_secret_piece_mapping.clear()
+
+    def send_recover_txs(self):
+        client.recover_secret_tx()
 
     def get_ob_sec(self):
         client.get_obliged_secrets()

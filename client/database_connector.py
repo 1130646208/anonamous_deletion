@@ -28,7 +28,7 @@ class DBConnector:
 
     def return_secret(self, secret_digest):
         result = self.collection.find_one({"secret_digest": secret_digest})
-        if result and self.check_expire(secret_digest):
+        if result and not self.check_expire(secret_digest):
             secret = result.get("secret_content")
         else:
             secret = None

@@ -57,7 +57,13 @@ class TxPool:
         current_time = time.time_ns()
         transaction_id = hashlib.md5(str(current_time + salt).encode()).hexdigest()
         membership_proof_encoded = b64.b64encode(membership_proof.encode())
-        transaction = {"membership_proof": str(membership_proof_encoded),
+        # transaction = {"membership_proof": str(membership_proof_encoded),
+        #                "transaction_id": transaction_id,
+        #                "transaction_type": transaction_type,
+        #                "content": content,
+        #                "timestamp": str(current_time)}
+
+        transaction = {"membership_proof": 'omitted',
                        "transaction_id": transaction_id,
                        "transaction_type": transaction_type,
                        "content": content,
@@ -113,7 +119,8 @@ class TxPool:
         #     return False
         required = {
             'txdata': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp'],
-            'txdelete': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp']
+            'txdelete': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp'],
+            'txrecover': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp']
         }
 
         if tx['transaction_type'] == 'txdata':
@@ -132,6 +139,15 @@ class TxPool:
 
             if not all(k in tx.keys() for k in required['txdelete']):
                 print('Illegal txdelete transaction.')
+                return False
+
+        elif tx['transaction_type'] == 'txrecover':
+            if not len(tx.keys()) == len(required['txrecover']):
+                print('Illegal txdata transaction.')
+                return False
+
+            if not all(k in tx.keys() for k in required['txrecover']):
+                print('Illegal txdata transaction.')
                 return False
         else:
             return False
@@ -158,6 +174,7 @@ class TxPool:
 
         tx_to_return = []
         tx_to_return.extend(self.txs_out)
+        self.txs_out.clear()
         return tx_to_return
 
     def drop_some_txs(self, tx_ids: list):

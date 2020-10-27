@@ -4,7 +4,7 @@ import requests
 import base64 as b64
 
 from rsa import DecryptionError
-from rsa.key import PrivateKey
+from rsa.key import PrivateKey, PublicKey
 from client.database_connector import DBConnector
 
 from crypto_rsa.crypto_rsa import RSAHandler
@@ -22,9 +22,11 @@ class Client:
     def __init__(self, ip: str = None):
         self.block_chain = BlockChain()
         self.txs_done = set()
-        self.data_base = DBConnector('127_0_0_1', ip.split(":")[2])
+        if ip:
+            self.data_base = DBConnector('127_0_0_1', ip.split(":")[2])
         # {rsa_pk: secret_md5(str)}
         self.rsa_pk_and_secret_piece_mapping = dict()
+        self.recovered_secret_pieces = []
 
         self.__ring_sig_handler = RingSigHandler()
         self.rsa_handler = RSAHandler()
@@ -34,7 +36,7 @@ class Client:
         # register variables
         self.rsa_public_key_tuple = self.rsa_handler.pk_tuple
         self.rsa_public_key_origin = self.rsa_handler.key_pair.get('pk')
-        self.rsa_public_key_origin = self.rsa_handler.key_pair.get('pk')
+
         # test
         self.rsa_private_key_origin = self.rsa_handler.key_pair.get('sk')
 
@@ -155,6 +157,7 @@ class Client:
         # 记录完成交易的ID
         succeed_tx_ids = []
         decrypted_secret = None
+        # 遍历区块链
         for block in self.block_chain.chain:
             transactions = block.get("transactions")
             if transactions:
@@ -184,16 +187,31 @@ class Client:
             if not r2.status_code == 201:
                 raise ValueError("Submit txs done error.")
 
-    def operate_secrets(self, secret_or_digest, transaction_type: str):
+    def operate_secrets(self, decrypted_secret, transaction_type: str):
         """
         after get the secret from block chain, do operations to secrets according to the transaction_type
         :return:
         """
         if transaction_type == 'txdata':
-            self.data_base.save_secret(str(secret_or_digest), 0)
+            self.data_base.save_secret(str(decrypted_secret), 0)
 
         elif transaction_type == 'txdelete':
-            self.data_base.delete_secret(secret_or_digest.decode())
+            self.data_base.delete_secret(decrypted_secret.decode())
+
+        # 返还别人的秘密
+        elif transaction_type == 'txrecover':
+            _digest = decrypted_secret.split(b'||')[0]
+            _requester_rsa_pk = eval(decrypted_secret.split(b'||')[1])
+            secret_content = eval(self.data_base.return_secret(_digest.decode()))
+            enc_secret_content = self.rsa_handler.rsa_enc_long_bytes(secret_content, PublicKey(_requester_rsa_pk[0], _requester_rsa_pk[1]))
+            self.new_transaction('txdata', str(enc_secret_content))
+
+    def recover_secret_tx(self):
+        temp = (self.rsa_public_key_origin['n'], self.rsa_public_key_origin['e'])
+        for pk, secret_md5 in self.rsa_pk_and_secret_piece_mapping.items():
+            content_bytes = self.rsa_handler.rsa_enc_long_bytes((secret_md5 + '||' + str(temp)).encode(), pk)
+            self.new_transaction(transaction_type='txrecover', content=str(content_bytes))
+            print('Sent recover requests for secret_md5: {}'.format(secret_md5))
 
     def encrypt_secrets_parallel(self, pks, secrets_to_be_encrypted):
         """
@@ -261,16 +279,21 @@ class Client:
     def get_transactions_to_pack(self, num_to_get=0):
         # todo: when packed txs are mined by other node, cancel mine these txs
         r = requests.get("http://" + POOL_URL + ":" + POOL_PORT + "/transactions/get")
+        txs_list_str = r.text
+        # 从交易池获得来的交易排序一下
+        # todo: delete 'sorted'
+        txs_list = sorted(eval(txs_list_str), key=lambda x: x["transaction_id"])
+
         if not r.status_code == 201:
             print("Message from client.get_transactions_to_pack: unable to get transactions from pool.")
+            return False
 
+        elif not txs_list:
+            return False
         else:
-            txs_list_str = r.text
-            # 从交易池获得来的交易排序一下
-            # todo: delete 'sorted'
-            txs_list = sorted(eval(txs_list_str), key=lambda x: x["transaction_id"])
             self.block_chain.transactions.extend(txs_list)
             print("Got transactions: {} to be mine...".format(str(txs_list)))
+            return True
 
     def mine(self):
         packed_transactions_ids = get_transactions_ids(self.block_chain.transactions)
