@@ -38,19 +38,23 @@ def test_hide_performance(N, n, k):
     print('Start.# 1 Shamir Secret Sharing...')
     tik1 = time.time()
     secret_pieces = [item.encode() for item in client1.split_secret(b64.b64encode(secret), _k, _n)]
+    tok1 = time.time()
 
     # 2 加密分片
     print('Start.# 2 RSA encrypting Secret pieces...')
+    tik2 = time.time()
     secrets_to_hide = client1.encrypt_secrets_parallel(random.sample(rsa_pks, _n), secret_pieces)
+    tok2 = time.time()
 
     # 3 生成环签名&验证环签名
     print('Start.# 3 Ring Signature and Verify...')
     proofs = []
+    tik3 = time.time()
     for item in secrets_to_hide:
         proof = client1.gen_membership_proof(ring_sig_pks, str(item))
         client2.verify_ring_signature(proof, str(item))
         proofs.append(proof)
-    tok1 = time.time()
+    tok3 = time.time()
 
     # 找到并解密分片
     def go_through_and_dec(one_client: Client):
@@ -68,26 +72,31 @@ def test_hide_performance(N, n, k):
     print('Start.# 4 Clients Find Secrets...')
     client_threads = [Thread(target=go_through_and_dec, args=(client,)) for client in clients]
 
-    tik2 = time.time()
+    tik4 = time.time()
     [thread.start() for thread in client_threads]
     [thread.join() for thread in client_threads]
-    tok2 = time.time()
+    tok4 = time.time()
 
-    time_consumed = tok1 - tik1 + tok2 - tik2
+    time_consumed = tok1 - tik1 + tok2 - tik2 + tok3 - tik3 + tok4 - tik4
     print('Time consumed:', time_consumed)
-    return time_consumed
+    return [tok1 - tik1, tok2 - tik2, tok3 - tik3, tok4 - tik4]
 
 
 if __name__ == '__main__':
     k_to_n = 0.4
     n_to_N = 0.4
-    data = pd.DataFrame(columns=['N', 't'])
+    data = pd.DataFrame(columns=['N', 't1', 't2', 't3', 't4'])
     data['N'] = range(20, 100, 2)
     t = []
     for N in tqdm(range(20, 100, 2)):
         n = math.ceil(N*n_to_N)
         k = math.ceil(n*k_to_n)
         t.append(test_hide_performance(N, n, max(2, k)))
-    data['t'] = t
+
+    data['t1'] = [_t[0] for _t in t]
+    data['t2'] = [_t[1] for _t in t]
+    data['t3'] = [_t[2] for _t in t]
+    data['t4'] = [_t[3] for _t in t]
     print(data)
-    data.to_csv('result_k_to_n_' + str(k_to_n) + '_n_to_N_' + str(n_to_N) + '.csv')
+    # data.to_csv('result_k_to_n_' + str(k_to_n) + '_n_to_N_' + str(n_to_N) + '.csv')
+    data.to_csv('part_result_k_to_n_' + str(k_to_n) + '_n_to_N_' + str(n_to_N) + '.csv')

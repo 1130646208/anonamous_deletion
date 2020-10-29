@@ -31,7 +31,7 @@ class ClientGui:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry('400x400+1000+200')
+        self.root.geometry('400x400+200+200')
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
         # self.root.rowconfigure(2, weight=1)
@@ -99,8 +99,11 @@ class ClientGui:
         tk.Button(self.btn_frame, text=' 撤销我的秘密 ', fg='black',
                   command=self.send_revoke_txs).grid(row=3, column=3, padx=8, pady=8)
 
+        tk.Button(self.btn_frame, text=' 请求恢复秘密 ', fg='black',
+                  command=self.send_recover_txs).grid(row=2, column=2, padx=8, pady=8)
+
         tk.Button(self.btn_frame, text=' 恢复我的秘密 ', fg='black',
-                  command=self.send_recover_txs).grid(row=2, column=3, padx=8, pady=8)
+                  command=self.reconstruct_secret).grid(row=2, column=3, padx=8, pady=8)
 
         self.root.mainloop()
 
@@ -183,6 +186,9 @@ class ClientGui:
 
     def send_recover_txs(self):
         client.recover_secret_tx()
+
+    def reconstruct_secret(self):
+        print('秘密恢复成功：', client.recover_secret(client.recovered_secret_pieces))
 
     def get_ob_sec(self):
         client.get_obliged_secrets()

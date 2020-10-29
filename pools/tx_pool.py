@@ -120,7 +120,8 @@ class TxPool:
         required = {
             'txdata': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp'],
             'txdelete': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp'],
-            'txrecover': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp']
+            'txrecover': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp'],
+            'txreturn': ['membership_proof', 'transaction_id', 'transaction_type', 'content', 'timestamp']
         }
 
         if tx['transaction_type'] == 'txdata':
@@ -144,6 +145,15 @@ class TxPool:
         elif tx['transaction_type'] == 'txrecover':
             if not len(tx.keys()) == len(required['txrecover']):
                 print('Illegal txdata transaction.')
+                return False
+
+            if not all(k in tx.keys() for k in required['txrecover']):
+                print('Illegal txdata transaction.')
+                return False
+
+        elif tx['transaction_type'] == 'txreturn':
+            if not len(tx.keys()) == len(required['txreturn']):
+                print('Illegal txreturn transaction.')
                 return False
 
             if not all(k in tx.keys() for k in required['txrecover']):

@@ -70,7 +70,6 @@ class ClientGui:
         self.view_area2.config(yscrollcommand=self.sb2.set)
         self.sb2.config(command=self.view_area2.yview)
 
-        self.secret = b64.b64encode(b'weather changes for nothing!')
         # define buttons
         tk.Button(self.btn_frame, text='   查看交易池   ', fg='black',
                   command=lambda: self.view_transaction_pool()).grid(row=0, column=0, padx=8, pady=8)
@@ -99,8 +98,11 @@ class ClientGui:
         tk.Button(self.btn_frame, text=' 撤销我的秘密 ', fg='black',
                   command=self.send_revoke_txs).grid(row=3, column=3, padx=8, pady=8)
 
+        tk.Button(self.btn_frame, text=' 请求恢复秘密 ', fg='black',
+                  command=self.send_recover_txs).grid(row=2, column=2, padx=8, pady=8)
+
         tk.Button(self.btn_frame, text=' 恢复我的秘密 ', fg='black',
-                  command=self.send_recover_txs).grid(row=2, column=3, padx=8, pady=8)
+                  command=self.reconstruct_secret).grid(row=2, column=3, padx=8, pady=8)
 
         self.root.mainloop()
 
@@ -158,7 +160,8 @@ class ClientGui:
         client.block_chain.resolve_conflicts()
 
     def enc_sec(self):
-        pieces = client.split_secret(self.secret, 2, 3)
+        secret = self.view_area2.get('1.0', 'end')
+        pieces = client.split_secret(b64.b64encode(secret.encode()), 2, 3)
         all_pks = client.get_rsa_pks_from_pool()
         assert (len(all_pks) >= len(pieces))
 
@@ -183,6 +186,9 @@ class ClientGui:
 
     def send_recover_txs(self):
         client.recover_secret_tx()
+
+    def reconstruct_secret(self):
+        print('秘密恢复成功：', client.recover_secret(client.recovered_secret_pieces))
 
     def get_ob_sec(self):
         client.get_obliged_secrets()

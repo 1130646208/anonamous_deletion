@@ -11,10 +11,10 @@ from crypto_rsa.crypto_rsa import RSAHandler
 from ring_signature.ring_signature_handler import RingSigHandler
 from secret_sharing import Base64ToHexSecretSharer
 from helpers import str_vector_to_tuple, tuple_vector_to_str, int_to_bn128_FQ, reconstruct_rsa_pk, strip_secret, \
-    get_transactions_ids, tx_list_to_ordered
+    get_transactions_ids
 from pools import POOL_URL, POOL_PORT
 from .block_chain import BlockChain
-from .tx_done_chain import TxDoneChain
+
 
 
 class Client:
@@ -134,7 +134,7 @@ class Client:
         secret_striped = str(secret)[2:-1].rstrip("=")
         return self.b2hss.split_secret(secret_striped, threshold, total)
 
-    def recover_secret(self, shares: list) -> bytes:
+    def recover_secret(self, shares: list) -> str:
         """
         recovery a secret from shamir pieces
         :param shares:
@@ -143,7 +143,7 @@ class Client:
 
         secret_string = self.b2hss.recover_secret(shares)
         secret_b64 = bytes(secret_string.encode()) + b"===="
-        return secret_b64
+        return b64.b64decode(secret_b64)
 
     def get_obliged_secrets(self):
         """
@@ -193,7 +193,19 @@ class Client:
         :return:
         """
         if transaction_type == 'txdata':
+            # md = md5(str(decrypted_secret).encode()).hexdigest()
+            # if md in self.rsa_pk_and_secret_piece_mapping.values():
+            #     print('我的秘密回来啦！')
+            #     self.recovered_secret_pieces.append(decrypted_secret)
+            #     self.data_base.save_secret(str(decrypted_secret), 0)
+            # else:
             self.data_base.save_secret(str(decrypted_secret), 0)
+
+        elif transaction_type == 'txreturn':
+            md = md5(str(decrypted_secret).encode()).hexdigest()
+            if md in self.rsa_pk_and_secret_piece_mapping.values():
+                print('我的秘密回来啦！')
+                self.recovered_secret_pieces.append(decrypted_secret.decode())
 
         elif transaction_type == 'txdelete':
             self.data_base.delete_secret(decrypted_secret.decode())
@@ -204,7 +216,7 @@ class Client:
             _requester_rsa_pk = eval(decrypted_secret.split(b'||')[1])
             secret_content = eval(self.data_base.return_secret(_digest.decode()))
             enc_secret_content = self.rsa_handler.rsa_enc_long_bytes(secret_content, PublicKey(_requester_rsa_pk[0], _requester_rsa_pk[1]))
-            self.new_transaction('txdata', str(enc_secret_content))
+            self.new_transaction('txreturn', str(enc_secret_content))
 
     def recover_secret_tx(self):
         my_rsa_pk = (self.rsa_public_key_origin['n'], self.rsa_public_key_origin['e'])
